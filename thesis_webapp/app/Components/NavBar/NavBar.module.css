@@ -1,0 +1,53 @@
+
+  .nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .navList {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navItem {
+    font-size: 1rem;
+    position: relative;
+  }
+  
+  .navItem a {
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .link {
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .link::after {
+    content: " ";
+    display: block;
+    height: 2px;
+    background: var(--c-primary);
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+    width: 0%;
+  }
+  
+  .link:hover::after {
+    width: 100%;
+    background: var(--c-accent);
+  }
+  
+  .active::after {
+    content: " ";
+    display: block;
+    height: 2px;
+    left: 0;
+    background: var(--c-primary);
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+    width: 100%;
+  }

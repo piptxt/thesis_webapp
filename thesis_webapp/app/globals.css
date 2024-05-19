@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --c-primary: #f8ad29;
+    --c-accent: #132f55;
+  }

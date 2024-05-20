@@ -1,5 +1,4 @@
-
-  .nav {
+/* .nav {
     flex-grow: 1;
     display: flex;
     justify-content: flex-end;
@@ -21,33 +20,33 @@
   .navItem a {
     text-decoration: none;
     color: #000;
-  }
-  
-  .link {
-    cursor: pointer;
-    position: relative;
-  }
-  
-  .link::after {
-    content: " ";
-    display: block;
-    height: 2px;
-    background: var(--c-primary);
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 0%;
-  }
-  
-  .link:hover::after {
-    width: 100%;
-    background: var(--c-accent);
-  }
-  
-  .active::after {
-    content: " ";
-    display: block;
-    height: 2px;
-    left: 0;
-    background: var(--c-primary);
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 100%;
-  }
+  } */
+
+.link {
+  cursor: pointer;
+  position: relative;
+}
+
+.link::after {
+  content: " ";
+  display: block;
+  height: 2px;
+  background: var(--c-primary);
+  transition: width 0.3s ease 0s, left 0.3s ease 0s;
+  width: 0%;
+}
+
+.link:hover::after {
+  width: 100%;
+  background: var(--c-accent);
+}
+
+.active::after {
+  content: " ";
+  display: block;
+  height: 2px;
+  left: 0;
+  background: var(--c-primary);
+  transition: width 0.3s ease 0s, left 0.3s ease 0s;
+  width: 100%;
+}

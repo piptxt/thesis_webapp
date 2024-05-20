@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 import NavBar from "../Components/NavBar/NavBar.jsx";
 
 const About: React.FC = () => {
   return (
     <div>
-    <NavBar></NavBar>
+      <NavBar></NavBar>
       <h1>About</h1>
       <p>This is the about page.</p>
     </div>

@@ -6,3 +6,12 @@
     --c-primary: #f8ad29;
     --c-accent: #132f55;
   }
+
+  .animate-swipeReveal {
+    animation: swipeReveal 0.7s forwards;
+  }
+  
+  @keyframes swipeReveal {
+    from { width: 0; opacity: 0; }
+    to { width: 100%; opacity: 1; }
+  }

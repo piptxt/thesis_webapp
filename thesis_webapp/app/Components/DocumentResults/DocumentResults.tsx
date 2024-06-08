@@ -1,54 +1,47 @@
 import clientPromise from "../../../lib/mongodb";
-import { GetServerSideProps } from "next";
 
-interface Movie {
-  _id: string;
-  title: string;
-  metacritic: number;
-  plot: string;
-}
+export default async function DocumentResults({ query }) {
+  let movies: any = [];
+  let mongodbQuery = query;
 
-interface MoviesProps {
-  movies: Movie[];
-}
+  try {
+    const client = await clientPromise;
+    client.connect();
+    const db = client.db("sample_mflix");
 
-const DocumentResults: React.FC<MoviesProps> = ({ movies }) => {
+    if (!mongodbQuery) {
+      movies = await db
+        .collection("movies")
+        .find({})
+        .sort({ metacritic: -1 })
+        .limit(20)
+        .toArray();
+    } else {
+      movies = await db
+        .collection("movies")
+        .find({})
+        .sort({ metacritic: -1 })
+        .limit(5)
+        .toArray();
+    }
+  } catch (error) {
+    movies = [];
+    console.log("MongoDB not connecting");
+  }
+
   return (
     <div>
-      <h1>Top 20 Movies of All Time</h1>
-      <p>
-        <small>(According to Metacritic)</small>
-      </p>
       <ul>
-        {movies.map((movie) => (
+        {movies.map((movie: any) => (
           <li key={movie._id}>
-            <h2>{movie.title}</h2>
-            <h3>{movie.metacritic}</h3>
-            <p>{movie.plot}</p>
+            <h2>Title: {movie.title}</h2>
+            <h3>Metacritic: {movie.metacritic}</h3>
+            <p>Plot: {movie.plot}</p>
+            <br />
+            <br />
           </li>
         ))}
       </ul>
     </div>
   );
-};
-
-export default DocumentResults;
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const client = await clientPromise;
-    const db = client.db("sample_mflix");
-    const movies = await db
-      .collection("movies")
-      .find({})
-      .sort({ metacritic: -1 })
-      .limit(20)
-      .toArray();
-    return {
-      props: { movies: JSON.parse(JSON.stringify(movies)) },
-    };
-  } catch (e) {
-    console.error(e);
-    return { props: { movies: [] } };
-  }
-};
+}

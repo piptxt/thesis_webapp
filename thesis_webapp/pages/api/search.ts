@@ -16,9 +16,21 @@ export default async function handler(
     const agg = [
       {
         $search: {
-          text: {
-            query: query,
-            path: "plot",
+          compound: {
+            should: [
+              {
+                text: {
+                  query: query,
+                  path: "plot",
+                },
+              },
+              {
+                text: {
+                  query: query,
+                  path: "title",
+                },
+              },
+            ],
           },
           scoreDetails: true,
         },

@@ -7,6 +7,7 @@ export default async function DocumentPage({ searchParams }) {
   let movie: any;
   const { ObjectId } = require("mongodb");
 
+  // LAZY AND UNPROPER WAY OF FETCHING DATA - NOT USING ROUTES - WILL FIX
   try {
     const client = await clientPromise;
     const db = client.db("sample_mflix");

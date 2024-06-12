@@ -13,6 +13,41 @@ export default async function handler(
       return;
     }
 
+    if (query === "") {
+      const client = await clientPromise;
+      const db = client.db("sample_mflix");
+      const movies = await db.collection("movies").find({}).limit(20).toArray();
+      return res.status(200).json({ movies });
+    }
+
+    // SIMPLE QUERY
+    // const agg = [
+    //   {
+    //     $search: {
+    //       text: {
+    //         query: query,
+    //         path: "plot",
+    //       },
+    //       scoreDetails: true,
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       title: 1,
+    //       directors: 1,
+    //       fullplot: 1,
+    //       scoreDetails: {
+    //         $meta: "searchScoreDetails",
+    //       },
+    //     },
+    //   },
+    //   {
+    //     $limit: 10,
+    //   },
+    // ];
+
+    // MORE COMPLEX QUERY
     const agg = [
       {
         $search: {

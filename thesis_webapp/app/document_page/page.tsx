@@ -1,6 +1,7 @@
 import { useSearchParams } from "next/navigation";
 import NavBar from "../Components/NavBar/NavBar";
-import SearchBar from "../Components/SearchBar/SearchBar";
+import SearchBar from "../Components/SearchBar/BasicSearchBar";
+import AdvancedSearchBar from "../Components/SearchBar/AdvancedSearchBar";
 import clientPromise from "@/lib/mongodb";
 
 export default async function DocumentPage({ searchParams }) {
@@ -20,6 +21,7 @@ export default async function DocumentPage({ searchParams }) {
     <>
       <NavBar />
       <SearchBar />
+
       <main className="mx-auto my-15 p-5 w-3/4 border rounded-lg">
         <h2 className="text-4xl mt-1 font-semibold text-sky-700 text-center">
           {movie.title}

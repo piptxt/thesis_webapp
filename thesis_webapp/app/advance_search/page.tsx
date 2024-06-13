@@ -3,8 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import NavBar from "../Components/NavBar/NavBar";
 import SearchBars from "../Components/SearchBar/SearchBars";
-import useSWR from "swr";
 import Link from "next/link";
+import useSWR from "swr";
 
 const fetchMovies = async (url: string) => {
   const response = await fetch(url);
@@ -16,13 +16,18 @@ const fetchMovies = async (url: string) => {
   return response.json();
 };
 
-export default function SearchPage() {
+export default function AdvancedSearchResultsPage() {
   const search = useSearchParams();
-  const searchQuery = search ? search.get("basic_search") : null;
+  const title = search ? search.get("title") : "";
+  const cast = search ? search.get("cast") : "";
+  const plot = search ? search.get("plot") : "";
 
-  const encodedSearchQuery = encodeURIComponent(searchQuery || "");
+  const encodedTitle = encodeURIComponent(title || "");
+  const encodedCast = encodeURIComponent(cast || "");
+  const encodedPlot = encodeURIComponent(plot || "");
+
   const { data, error, isLoading } = useSWR(
-    `/api/search?basic_search=${encodedSearchQuery}`,
+    `/api/advance_search?title=${encodedTitle}&cast=${encodedCast}&plot=${encodedPlot}`,
     fetchMovies
   );
 

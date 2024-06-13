@@ -12,16 +12,13 @@ export default function SearchBar() {
     event.preventDefault();
 
     const encodedSearchQuery = encodeURI(query || "");
-    router.push(`/search?q=${encodedSearchQuery}`);
+    router.push(`/search?basic_search=${encodedSearchQuery}`);
   }
 
   return (
     <>
-      <div className="mx-auto my-10">
-        <form className="max-w-md mx-auto" onSubmit={onSearch}>
-          <label className="mb-2 text-sm font-medium text-gray-900 sr-only">
-            Search
-          </label>
+      <div className="mx-auto my-2">
+        <form className="max-w-xl mx-auto" onSubmit={onSearch}>
           <div className="relative">
             <input
               type="search"

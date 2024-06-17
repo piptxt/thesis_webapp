@@ -63,6 +63,9 @@ export default function SearchPage() {
               </span>
             )
           )}
+          <h2 className="text-base mt-1 font-normal">
+            Relevancy Score: {movie.scoreDetails.value}
+          </h2>
           <p className="text-sm mt-4 line-clamp-2 text-gray-600">
             {movie.fullplot}
           </p>

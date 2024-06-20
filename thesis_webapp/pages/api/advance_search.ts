@@ -7,10 +7,10 @@ export default async function handler(
 ) {
   try {
     // Extract query parameters
-    const { title: title, cast: cast, plot: plot } = req.query;
+    const { title: title, category: category, body: body } = req.query;
 
     const client = await clientPromise;
-    const db = client.db("sample_mflix");
+    const db = client.db("Thesis");
 
     // Build the aggregation pipeline for MongoDB
     const agg: any[] = [];
@@ -23,27 +23,35 @@ export default async function handler(
         },
       });
     }
-    if (cast) {
+    if (category) {
       agg.push({
         $match: {
-          cast: { $elemMatch: { $regex: cast as string, $options: "i" } },
+          category: {
+            $elemMatch: { $regex: category as string, $options: "i" },
+          },
         },
       });
     }
-    if (plot) {
+    if (body) {
       agg.push({
         $match: {
-          plot: { $regex: plot as string, $options: "i" },
+          raw_full_body: { $regex: body as string, $options: "i" },
         },
       });
+    }
+
+    // If empty
+    if (!agg) {
+      const movies = await db.collection("Acts").find({}).limit(10);
+      res.status(200).json({ movies });
     }
 
     // Default to limit results and paginate
-    const limit = 10;
+    const limit = 50;
     agg.push({ $limit: limit });
 
     const movies = await db
-      .collection("movies")
+      .collection("Acts")
       .aggregate(agg)
       .limit(10)
       .toArray();

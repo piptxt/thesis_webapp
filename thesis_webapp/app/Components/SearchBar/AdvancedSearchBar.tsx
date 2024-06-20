@@ -8,8 +8,8 @@ export default function AdvancedSearchBar() {
   const search = useSearchParams();
   const [advQuery, setAdvQuery] = useState({
     title: "",
-    cast: "",
-    plot: "",
+    category: "",
+    body: "",
   });
   const router = useRouter();
 
@@ -27,13 +27,13 @@ export default function AdvancedSearchBar() {
 
     console.log(advQuery);
     const encodedTitle = encodeURI(advQuery.title || "");
-    const encodedCast = encodeURI(advQuery.cast || "");
-    const encodedPlot = encodeURI(advQuery.plot || "");
+    const encodedCategory = encodeURI(advQuery.category || "");
+    const encodedBody = encodeURI(advQuery.body || "");
 
     router.push(
       `/advance_search?title=${encodedTitle}` +
-        `&cast=${encodedCast}` +
-        `&plot=${encodedPlot}`
+        `&category=${encodedCategory}` +
+        `&body=${encodedBody}`
     );
   }
   return (
@@ -53,7 +53,7 @@ export default function AdvancedSearchBar() {
         </div>
         <div className="mb-2">
           <label className="block mb-1 text-md font-medium text-gray-900">
-            Cast
+            Category
           </label>
           <input
             type="search"
@@ -65,7 +65,7 @@ export default function AdvancedSearchBar() {
         </div>
         <div className="mb-2">
           <label className="block mb-1 text-md font-medium text-gray-900">
-            Plot
+            Body
           </label>
           <input
             type="search"

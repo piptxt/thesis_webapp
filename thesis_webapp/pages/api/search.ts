@@ -14,9 +14,14 @@ export default async function handler(
 
     if (query === "") {
       const client = await clientPromise;
-      const db = client.db("sample_mflix");
-      const movies = await db.collection("movies").find({}).limit(20).toArray();
-      return res.status(200).json({ movies });
+      const db = client.db("Thesis");
+      // const documents = await db
+      //   .collection("Acts")
+      //   .find({})
+      //   .limit(50)
+      //   .toArray();
+      const documents: any = [];
+      return res.status(200).json({ documents });
     }
 
     // SIMPLE QUERY
@@ -25,7 +30,7 @@ export default async function handler(
         $search: {
           text: {
             query: query,
-            path: "plot",
+            path: "raw_full_body",
           },
           scoreDetails: true,
         },
@@ -34,15 +39,15 @@ export default async function handler(
         $project: {
           _id: 1,
           title: 1,
-          directors: 1,
-          fullplot: 1,
+          category: 1,
+          raw_full_body: 1,
           scoreDetails: {
             $meta: "searchScoreDetails",
           },
         },
       },
       {
-        $limit: 10,
+        $limit: 50,
       },
     ];
 
@@ -86,16 +91,12 @@ export default async function handler(
     // ];
 
     const client = await clientPromise;
-    const db = client.db("sample_mflix");
-    const movies = await db
-      .collection("movies")
-      .aggregate(agg)
-      .limit(50)
-      .toArray();
+    const db = client.db("Thesis");
+    const documents = await db.collection("Acts").aggregate(agg).toArray();
 
-    res.status(200).json({ movies });
+    res.status(200).json({ documents });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to fetch movies" });
+    res.status(500).json({ error: "Failed to fetch Documents" });
   }
 }

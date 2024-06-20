@@ -6,11 +6,11 @@ import SearchBars from "../Components/SearchBar/SearchBars";
 import useSWR from "swr";
 import Link from "next/link";
 
-const fetchMovies = async (url: string) => {
+const fetchDocuments = async (url: string) => {
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error("Failed to get Movies");
+    throw new Error("Failed to get Documents");
   }
 
   return response.json();
@@ -23,51 +23,42 @@ export default function SearchPage() {
   const encodedSearchQuery = encodeURIComponent(searchQuery || "");
   const { data, error, isLoading } = useSWR(
     `/api/search?basic_search=${encodedSearchQuery}`,
-    fetchMovies
+    fetchDocuments
   );
 
-  let MovieList;
+  let DocumentList;
 
   if (isLoading) {
     // Handle loading state
-    MovieList = <p className="m-5">Loading...</p>;
+    DocumentList = <p className="m-5">Loading...</p>;
   } else if (error) {
     // Handle error state
-    MovieList = <p className="m-5">Error: {error.message}</p>;
-  } else if (!data || !data.movies || data.movies.length === 0) {
+    DocumentList = <p className="m-5">Error: {error.message}</p>;
+  } else if (!data || !data.documents || data.documents.length === 0) {
     // Safeguard against undefined data
-    MovieList = <p className="m-5">No movies found.</p>;
+    DocumentList = <p className="m-5">No Documents found.</p>;
   } else {
-    MovieList = data.movies.map((movie: any) => (
+    console.log(data.documents);
+    DocumentList = data.documents.map((document: any) => (
       <Link
-        key={movie._id}
+        key={document._id}
         href={{
           pathname: "document_page",
           query: {
-            id: movie._id,
+            id: document._id,
           },
         }}
       >
         <li className="m-5 p-5 border rounded">
           <h2 className="text-xl mt-1 font-semibold no-underline hover:underline cursor-pointer text-sky-700 ">
-            {movie.title}
+            {document.title}
           </h2>
-          {movie.directors.map((director: any, i: any) =>
-            i + 1 < movie.directors.length ? (
-              <span key={i} className="text-sm">
-                {director},{" "}
-              </span>
-            ) : (
-              <span key={i} className="text-sm">
-                {director}
-              </span>
-            )
-          )}
-          <h2 className="text-base mt-1 font-normal">
-            Relevancy Score: {movie.scoreDetails.value}
+          <h2 className="text-sm text-gray-600">{document.category}</h2>
+          <h2 className="text-base mt-1 font-sm text-gray-600">
+            Relevancy Score: {document.scoreDetails.value}
           </h2>
           <p className="text-sm mt-4 line-clamp-2 text-gray-600">
-            {movie.fullplot}
+            {document.raw_full_body}
           </p>
         </li>
       </Link>
@@ -80,7 +71,7 @@ export default function SearchPage() {
       <SearchBars />
       <ul className="m-auto w-2/3">
         <p className="mx-5 text-xl font-semibold">Search Results:</p>
-        {MovieList}
+        {DocumentList}
       </ul>
     </>
   );

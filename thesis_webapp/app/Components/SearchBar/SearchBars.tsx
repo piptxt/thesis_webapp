@@ -17,7 +17,7 @@ export default function SearchBars() {
   }
 
   return (
-    <div className="grid-cols-1 mx-auto mt-10 items-center text-center">
+    <div className="grid-cols-1 mx-auto mt-10 mb-10 items-center text-center">
       <button
         onClick={handleSetSearch}
         className="border rounded-lg px-5 py-2 bg-white font-bold hover:bg-gray-100"

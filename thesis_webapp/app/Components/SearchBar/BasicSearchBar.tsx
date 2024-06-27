@@ -22,7 +22,7 @@ export default function SearchBar() {
   return (
     <>
       <div className="mx-auto my-2">
-        <form className="w-2/3 mx-auto" onSubmit={onSearch}>
+        <form className="max-w-6xl mx-auto" onSubmit={onSearch}>
           <div className="relative flex items-center">
             {" "}
             {/* Add flex and items-center */}

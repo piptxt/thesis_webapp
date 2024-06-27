@@ -19,10 +19,12 @@ const fetchDocuments = async (url: string) => {
 export default function SearchPage() {
   const search = useSearchParams();
   const searchQuery = search ? search.get("basic_search") : null;
+  const searchCategory = search ? search.get("category") : null;
 
   const encodedSearchQuery = encodeURIComponent(searchQuery || "");
+  const encodedCategory = encodeURI(searchCategory || "");
   const { data, error, isLoading } = useSWR(
-    `/api/search?basic_search=${encodedSearchQuery}`,
+    `/api/search?basic_search=${encodedSearchQuery}&category=${encodedCategory}`,
     fetchDocuments
   );
 

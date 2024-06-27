@@ -6,24 +6,41 @@ import { useState } from "react";
 export default function SearchBar() {
   const search = useSearchParams();
   const [query, setQuery] = useState(search ? search.get("q") : null);
+  const [category, setCategory] = useState("all"); // Add state for dropdown
   const router = useRouter();
 
   function onSearch(event: React.FormEvent) {
     event.preventDefault();
 
     const encodedSearchQuery = encodeURI(query || "");
-    router.push(`/search?basic_search=${encodedSearchQuery}`);
+    const encodedCategory = encodeURI(category || "");
+    router.push(
+      `/search?basic_search=${encodedSearchQuery}&category=${encodedCategory}`
+    ); // Include category in query
   }
 
   return (
     <>
       <div className="mx-auto my-2">
-        <form className="max-w-xl mx-auto" onSubmit={onSearch}>
-          <div className="relative">
+        <form className="w-2/3 mx-auto" onSubmit={onSearch}>
+          <div className="relative flex items-center">
+            {" "}
+            {/* Add flex and items-center */}
+            <select
+              className="block p-4 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+            >
+              <option value="All">All</option>
+              <option value="Act">Acts</option>
+              <option value="Supreme">Supreme Court</option>
+              <option value="Republic Acts">Republic Acts</option>
+              <option value="Commonwealth">Commonwealth Acts</option>
+            </select>
             <input
               type="search"
               id="default-search"
-              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2" // Add ml-2 for margin
               placeholder="Search here..."
               value={query || ""}
               onChange={(event) => setQuery(event.target.value)}

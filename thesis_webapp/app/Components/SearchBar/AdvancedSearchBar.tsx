@@ -57,7 +57,7 @@ export default function AdvancedSearchBar() {
           </label>
           <input
             type="search"
-            name="cast"
+            name="category"
             className="block w-full p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search here..."
             onChange={handleChange}
@@ -69,7 +69,7 @@ export default function AdvancedSearchBar() {
           </label>
           <input
             type="search"
-            name="plot"
+            name="body"
             className="block w-full p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search here..."
             onChange={handleChange}

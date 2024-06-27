@@ -14,7 +14,7 @@ export default async function DocumentPage({ searchParams }) {
     const client = await clientPromise;
     const db = client.db("Thesis");
     document = await db
-      .collection("Acts")
+      .collection("Documents")
       .findOne({ _id: new ObjectId(searchParams.id) });
   } catch {}
 
@@ -28,7 +28,7 @@ export default async function DocumentPage({ searchParams }) {
           {document.title}
         </h2>
         <p className="text-sm mt-4 text-gray-600 indent-4 leading-loose">
-          {document.raw_full_body}
+          {document.text}
         </p>
       </main>
     </>

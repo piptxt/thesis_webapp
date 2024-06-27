@@ -24,13 +24,29 @@ export default async function handler(
       return res.status(200).json({ documents });
     }
 
-    // SIMPLE QUERY
     const agg = [
       {
         $search: {
-          text: {
-            query: query,
-            path: "raw_full_body",
+          compound: {
+            should: [
+              {
+                text: {
+                  query: query,
+                  path: "text",
+                },
+              },
+              {
+                text: {
+                  query: query,
+                  path: "text",
+                  score: {
+                    boost: {
+                      value: 5,
+                    },
+                  },
+                },
+              },
+            ],
           },
           scoreDetails: true,
         },
@@ -40,7 +56,7 @@ export default async function handler(
           _id: 1,
           title: 1,
           category: 1,
-          raw_full_body: 1,
+          text: 1,
           scoreDetails: {
             $meta: "searchScoreDetails",
           },
@@ -92,7 +108,7 @@ export default async function handler(
 
     const client = await clientPromise;
     const db = client.db("Thesis");
-    const documents = await db.collection("Acts").aggregate(agg).toArray();
+    const documents = await db.collection("Documents").aggregate(agg).toArray();
 
     res.status(200).json({ documents });
   } catch (error) {

@@ -58,7 +58,7 @@ export default function SearchPage() {
             Relevancy Score: {document.scoreDetails.value}
           </h2>
           <p className="text-sm mt-4 line-clamp-2 text-gray-600">
-            {document.raw_full_body}
+            {document.text}
           </p>
         </li>
       </Link>

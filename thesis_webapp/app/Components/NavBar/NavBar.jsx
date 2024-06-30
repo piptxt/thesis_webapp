@@ -38,6 +38,14 @@ const NavBar = () => {
         </li>
         <li className={navItem}>
           <Link
+            href="/visualizations"
+            className={pathname === "/visualizations" ? styles.active : styles.link}
+          >
+            Visualizations
+          </Link>
+        </li>
+        <li className={navItem}>
+          <Link
             href="/collection"
             className={pathname === "/collection" ? styles.active : styles.link}
           >

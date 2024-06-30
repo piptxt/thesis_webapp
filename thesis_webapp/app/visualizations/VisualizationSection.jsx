@@ -1,9 +1,20 @@
 'use client'
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from 'react';
 import H2 from '/public/heading/h2';
 import H3 from '/public/heading/h3';
-import { useState } from 'react';
+
+const isGif = (url) => {
+  return url.endsWith('.gif');
+};
+
+const folders = [
+  "Acts",
+  "Batas Pambata",
+  "Commonwealth Acts",
+  "Republic Acts",
+  "Supreme Court"
+];
 
 const imagesSet1 = [
   "/images/UMAP/cosine_umap_visualization.png",
@@ -22,30 +33,40 @@ const imagesSet2 = [
 ];
 
 const subtitlesSet2 = [
-  "All Law Documents Wordcloud",
-  "Acts Wordcloud",
-  "Batas Pambata Wordcloud",
-  "Commonwealth Acts Wordcloud",
-  "Republic Acts Wordcloud",
-  "Supreme Court Wordcloud"
+  "All Legal Documents",
+  "Acts",
+  "Batas Pambata",
+  "Commonwealth Acts",
+  "Republic Acts",
+  "Supreme Court"
 ];
 
-const isGif = (url) => {
-  return url.endsWith('.gif');
-}
-
-const VisualSection = ({ wordCountBargraphsImages }) => {
-  const pathname = usePathname();
+const VisualSection = ({ initialImages }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImages, setCurrentImages] = useState(initialImages);
+  const [selectedFolder, setSelectedFolder] = useState(folders[0]);
 
   const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % wordCountBargraphsImages.length);
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % currentImages.length);
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + wordCountBargraphsImages.length) % wordCountBargraphsImages.length);
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + currentImages.length) % currentImages.length);
   };
-  
+
+  const handleDropdownChange = async (event) => {
+    const folder = event.target.value;
+    setSelectedFolder(folder);
+    const response = await fetch(`/api/getImagePaths?folderName=${folder}`);
+    const images = await response.json();
+    setCurrentImages(images);
+    setCurrentImageIndex(0);
+  };
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [currentImages]);
+
   return (
     <div>
       <style jsx>{`
@@ -122,7 +143,7 @@ const VisualSection = ({ wordCountBargraphsImages }) => {
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
-          {imagesSet2.slice(1,5).map((image, idx) => (
+          {imagesSet2.slice(1, 5).map((image, idx) => (
             <div key={idx} className="image-container" style={{ animation: `floatIn 1s ${idx * 0.2 + 0.5}s both` }}>
               {isGif(image) ? (
                 <img src={image} alt={subtitlesSet2[idx + 1]} className="rounded-lg" loop autoPlay />
@@ -142,20 +163,28 @@ const VisualSection = ({ wordCountBargraphsImages }) => {
           </div>
         </div>
 
-        {/* New Section for Image Navigation */}
-        <H2 className="text-center text-3xl font my-5 mt-10">Image Navigation</H2>
+        <H2 className="text-center text-3xl font my-5 mt-10">Wordcount Visuals</H2>
         <div className="flex justify-center mb-6" style={{ animation: `floatIn 1s both` }}>
           <div className="small-image-container">
-            {isGif(wordCountBargraphsImages[currentImageIndex]) ? (
-              <img src={wordCountBargraphsImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} className="rounded-lg" loop autoPlay />
+            {isGif(currentImages[currentImageIndex]) ? (
+              <img src={currentImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} className="rounded-lg" loop autoPlay />
             ) : (
-              <Image src={wordCountBargraphsImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
+              <Image src={currentImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
             )}
           </div>
         </div>
         <div className="navigation-buttons">
           <button onClick={prevImage}>Previous</button>
           <button onClick={nextImage}>Next</button>
+        </div>
+        
+        {/* Dropdown to select image set */}
+        <div className="flex justify-center mt-10">
+          <select onChange={handleDropdownChange} value={selectedFolder} className="p-2 border rounded">
+            {folders.map((folder) => (
+              <option key={folder} value={folder}>{folder}</option>
+            ))}
+          </select>
         </div>
       </div>
     </div>

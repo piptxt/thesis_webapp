@@ -4,12 +4,12 @@ import VisualSection from "./VisualizationSection.jsx";
 import { getImagePaths } from "../../lib/getImagePaths";
 
 const Collection = async () => {
-  const wordCountBargraphsImages = getImagePaths('images/Wordcount_Bargraphs/Acts_Plots');
+  const initialImages = getImagePaths('Acts');
 
   return (
     <div>
       <NavBar />
-      <VisualSection wordCountBargraphsImages={wordCountBargraphsImages} />
+      <VisualSection initialImages={initialImages} />
     </div>
   );
 };

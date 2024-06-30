@@ -3,6 +3,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import H2 from '/public/heading/h2';
 import H3 from '/public/heading/h3';
+import { useState } from 'react';
 
 const imagesSet1 = [
   "/images/UMAP/cosine_umap_visualization.png",
@@ -33,8 +34,17 @@ const isGif = (url) => {
   return url.endsWith('.gif');
 }
 
-const VisualSection = () => {
+const VisualSection = ({ wordCountBargraphsImages }) => {
   const pathname = usePathname();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % wordCountBargraphsImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + wordCountBargraphsImages.length) % wordCountBargraphsImages.length);
+  };
   
   return (
     <div>
@@ -67,6 +77,24 @@ const VisualSection = () => {
           width: 50%; /* Adjust the width as needed */
           padding-bottom: 50%; /* Adjusted aspect ratio for smaller image */
           margin: 0 auto; /* Center the container */
+        }
+        .navigation-buttons {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          margin-top: 10px;
+        }
+        .navigation-buttons button {
+          padding: 10px 20px;
+          cursor: pointer;
+          background-color: #0070f3;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          font-size: 16px;
+        }
+        .navigation-buttons button:hover {
+          background-color: #005bb5;
         }
       `}</style>
       <div className="container mx-auto my-10">
@@ -112,6 +140,22 @@ const VisualSection = () => {
             )}
             <H3 className="text-center mt-2">{subtitlesSet2[5]}</H3>
           </div>
+        </div>
+
+        {/* New Section for Image Navigation */}
+        <H2 className="text-center text-3xl font my-5 mt-10">Image Navigation</H2>
+        <div className="flex justify-center mb-6" style={{ animation: `floatIn 1s both` }}>
+          <div className="small-image-container">
+            {isGif(wordCountBargraphsImages[currentImageIndex]) ? (
+              <img src={wordCountBargraphsImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} className="rounded-lg" loop autoPlay />
+            ) : (
+              <Image src={wordCountBargraphsImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
+            )}
+          </div>
+        </div>
+        <div className="navigation-buttons">
+          <button onClick={prevImage}>Previous</button>
+          <button onClick={nextImage}>Next</button>
         </div>
       </div>
     </div>

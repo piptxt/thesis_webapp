@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AdvancedSearchBar from "./AdvancedSearchBar";
 import SearchBar from "./BasicSearchBar";
+import VectorSearchBar from "./VectorSearch";
 
 export default function SearchBars() {
   const [searchType, setSearchType] = useState("basic");
@@ -28,11 +29,11 @@ export default function SearchBars() {
               : "bg-white hover:bg-gray-100"
           }`}
         >
-          Advanced Search
+          Vector Search
         </button>
       </div>
       <div className="w-full transition duration-300 ease-in-out">
-        {searchType === "basic" ? <SearchBar /> : <AdvancedSearchBar />}
+        {searchType === "basic" ? <SearchBar /> : <VectorSearchBar />}
       </div>
     </div>
   );

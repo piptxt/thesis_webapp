@@ -18,7 +18,7 @@ export default async function handler(
     }
 
     let agg: any = [];
-    if (category === "All") {
+    if (category === "All" || category == "all") {
       agg = [
         {
           $search: {

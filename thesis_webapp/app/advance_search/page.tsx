@@ -7,7 +7,12 @@ import Link from "next/link";
 import useSWR from "swr";
 
 const fetchMovies = async (url: string) => {
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+    },
+  });
 
   if (!response.ok) {
     throw new Error("Failed to get Documents");
@@ -58,12 +63,13 @@ export default function AdvancedSearchResultsPage() {
           <h2 className="text-xl mt-1 font-semibold no-underline hover:underline cursor-pointer text-sky-700 ">
             {document.title}
           </h2>
-          <h2 className="text-sm text-gray-600">{document.category}</h2>
-          {/* <h2 className="text-base mt-1 font-sm text-gray-600">
+          <h2 className="text-sm text-gray-600">Category to follow with Official Dataset</h2> 
+          {/* {document.category}
+          <h2 className="text-base mt-1 font-sm text-gray-600">
             Relevancy Score: {document.scoreDetails.value}
           </h2> */}
           <p className="text-sm mt-4 line-clamp-2 text-gray-600">
-            {document.raw_full_body}
+            {document.text_chunk}
           </p>
         </li>
       </Link>

@@ -37,6 +37,121 @@ def convert_objectid_to_str(results):
             result['_id'] = str(result['_id'])
     return results
 
+def weighted_reciprocal_rank(doc_lists):
+    c = 60  # constant from the RRF paper
+    weights = [1] * len(doc_lists) #you can apply weights if you like, here they are all the same, ie 1
+    
+    if len(doc_lists) != len(weights):
+        raise ValueError("Number of rank lists must be equal to the number of weights.")
+    
+    # Create a union of all unique documents in the input doc_lists  rq r   TODO why need unique? what if document appears in both lists? which rank will it choose? shouldn't it accomodate both ranks?
+    all_documents = set()
+    for doc_list in doc_lists:
+        for doc in doc_list:
+            all_documents.add(doc["_id"])
+    
+    # Initialize the RRF score dictionary for each document
+    rrf_score_dict = {doc: 0.0 for doc in all_documents}
+    
+    # Calculate RRF scores for each document
+    for doc_list, weight in zip(doc_lists, weights):
+        for rank, doc in enumerate(doc_list, start=1):
+            rrf_score = weight * (1 / (rank + c))
+            rrf_score_dict[doc["_id"]] += rrf_score     # adds score to the key id in dictionary
+    
+    # Sort documents by their RRF scores in descending order
+    sorted_documents = sorted(rrf_score_dict.keys(), key=lambda x: rrf_score_dict[x], reverse=True)
+    # TRIAL ----------------------
+    print("RRF Score Dict Results:")
+    print(rrf_score_dict)
+    print("--------------------------------------------------------")
+    
+    # Map the sorted page_content back to the original document objects
+    page_content_to_doc_map = {
+        doc["_id"]: doc for doc_list in doc_lists for doc in doc_list
+    }
+    sorted_docs = [
+        # page_content_to_doc_map[_id] for _id in sorted_documents
+        {**page_content_to_doc_map[_id], 'rrf_score': rrf_score_dict[_id]} for _id in sorted_documents
+    ]
+    
+    return sorted_docs
+
+def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
+    # vector search
+    query_vector = generate_embedding(query)
+
+    vector_results = collection.aggregate([
+        {
+            "$vectorSearch": {
+                "queryVector": query_vector,
+                "path": "text_chunk_embedding",
+                "numCandidates": 100,
+                "limit": top_k,
+                "index": vector_index_name
+            },
+        },
+        {
+            "$project": {
+                "_id": 1,
+                "title": 1,
+                "text_chunk": 1,
+                "score": {"$meta": "vectorSearchScore"}
+            }
+        }
+    ])
+    vector_results = list(vector_results)
+    # TRIAL ----------------------
+    print("Vector Results:")
+    for doc in vector_results:
+      print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+    print("--------------------------------------------------------")
+
+    #keyword search 
+    keyword_results = collection.aggregate([
+        {
+            "$search": {
+                "index": keyword_index_name,
+                "text": {
+                    "query": query,
+                    "path": "text_chunk"
+                }
+            }
+        },
+        {"$addFields": {"score": {"$meta": "searchScore"}}},
+        {"$limit": top_k}
+    ])
+    keyword_results = list(keyword_results)
+    # TRIAL ----------------------
+    print("Keyword Results:")
+    for doc in keyword_results:
+      print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+    print("--------------------------------------------------------")
+
+    doc_lists = [vector_results, keyword_results]
+    # TRIAL ----------------------
+    print("Doc Lists Results:")
+    for doc_list in doc_lists:
+      for doc in doc_list:
+        print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+      print("---------------------------")
+    print("--------------------------------------------------------")
+
+    # Enforce that retrieved docs are the same form for each list in retriever_docs
+    for i in range(len(doc_lists)):
+        doc_lists[i] = [
+            {"_id": doc["_id"], "title": doc["title"], "title": doc["title"], "score": doc["score"]}
+            for doc in doc_lists[i]
+        ]
+
+    # apply rank fusion
+    fused_documents = weighted_reciprocal_rank(doc_lists)
+    print("Fused Docs Results:")
+    for doc in fused_documents:
+      print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+    print("--------------------------------------------------------")
+    return fused_documents
+
 @app.route('/aggregate_results', methods=['POST'])
 def aggregate_results():
     data = request.json
@@ -86,6 +201,26 @@ def aggregate_results():
 
     print(all_results)
     return jsonify(all_results)
+
+@app.route('/hybrid_results', methods=['POST'])
+def hybrid_results():
+    data = request.json
+    text = data.get("text", "")
+
+    if isinstance(text, str):
+        chunks = split_chunks(text)
+    else:
+        with open(text, 'r') as file:
+            text = file.read()
+            chunks = split_chunks(text)
+    
+    all_results = []
+
+    for chunk in chunks:
+        results = atlas_hybrid_search(chunk, top_k=5, vector_index_name="default_gte_1024", keyword_index_name="keyword_index")
+        all_results.extend(results)
+    
+    return jsonify(convert_objectid_to_str(all_results))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -32,7 +32,7 @@ export default function AdvancedSearchResultsPage() {
   const encodedBody = encodeURIComponent(body || "");
 
   const { data, error, isLoading } = useSWR(
-    `/api/advance_search?title=${encodedTitle}&category=${encodedCategory}&body=${encodedBody}`,
+    `/api/hybrid_search?title=${encodedTitle}&category=${encodedCategory}&body=${encodedBody}`,
     fetchMovies
   );
 

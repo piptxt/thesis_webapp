@@ -27,20 +27,26 @@ export default async function handler(
                 {
                   text: {
                     query: query,
-                    path: "text",
+                    path: "title",
                   },
                 },
                 {
                   text: {
                     query: query,
                     path: "text",
-                    score: {
-                      boost: {
-                        value: 5,
-                      },
-                    },
                   },
                 },
+                // {
+                //   text: {
+                //     query: query,
+                //     path: "text",
+                //     score: {
+                //       boost: {
+                //         value: 5,
+                //       },
+                //     },
+                //   },
+                // },
               ],
             },
             scoreDetails: true,

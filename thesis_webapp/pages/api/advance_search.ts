@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "@/lib/mongodb";
-import axios from "axios";
+// import axios from "axios";
 
 export default async function handler(
   req: NextApiRequest,
@@ -102,9 +102,12 @@ export default async function handler(
     //   .limit(10)
     //   .toArray();
 
-    const response = await axios.post("http://localhost:5000/aggregate_results", { text: title });
+    const response = await axios.post(
+      "http://localhost:5000/aggregate_results",
+      { text: title }
+    );
     console.log(response.data);
-    const documents = response.data
+    const documents = response.data;
     res.status(200).json({ documents });
   } catch (error) {
     console.error(error);

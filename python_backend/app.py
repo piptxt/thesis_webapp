@@ -2,14 +2,15 @@ from flask import Flask, request, jsonify
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import pymongo
+import certifi
 from bson import ObjectId
 
 app = Flask(__name__)
 
 # MongoDB Connection
-client = pymongo.MongoClient("mongodb+srv://priscillalicup:wovkk5sxg01rXYLW@cluster0.1xyfpdp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-db = client.supreme_court_jurisprudence
-collection = db["flattened_zip_2021_gte"]
+client = pymongo.MongoClient("mongodb+srv://pipo:snvQQfMSbJwDchjN@cluster0.yzkq3xh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",tlsCAFile=certifi.where())
+db = client.Thesis
+collection = db["Flattened"]
 
 # Load the SentenceTransformer model
 # model = SentenceTransformer("Alibaba-NLP/gte-large-en-v1.5", device='cuda', trust_remote_code=True)
@@ -85,7 +86,7 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
         {
             "$vectorSearch": {
                 "queryVector": query_vector,
-                "path": "text_chunk_embedding",
+                "path": "chunk_embedding",
                 "numCandidates": 100,
                 "limit": top_k,
                 "index": vector_index_name
@@ -95,7 +96,8 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
             "$project": {
                 "_id": 1,
                 "title": 1,
-                "text_chunk": 1,
+                "category": 1,
+                "chunk": 1,
                 "score": {"$meta": "vectorSearchScore"}
             }
         }
@@ -114,7 +116,7 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
                 "index": keyword_index_name,
                 "text": {
                     "query": query,
-                    "path": "text_chunk"
+                    "path": "chunk"
                 }
             }
         },
@@ -173,17 +175,18 @@ def aggregate_results():
             {
                 "$vectorSearch": {
                     "queryVector": generate_embedding(chunk),
-                    "path": "text_chunk_embedding",
+                    "path": "chunk_embedding",
                     "numCandidates": 100,
                     "limit": 5,
-                    "index": "default_gte_1024",
+                    "index": "vectorsearch_index",
                     "includeMetadata": True
                 }
             },
             {
                 "$project": {
                     "title": 1,
-                    "text_chunk": 1,
+                    "category": 1,
+                    "chunk": 1,
                     "score": {"$meta": "vectorSearchScore"}
                 }
             }
@@ -217,7 +220,7 @@ def hybrid_results():
     all_results = []
 
     for chunk in chunks:
-        results = atlas_hybrid_search(chunk, top_k=5, vector_index_name="default_gte_1024", keyword_index_name="keyword_index")
+        results = atlas_hybrid_search(chunk, top_k=5, vector_index_name="vectorsearch_index", keyword_index_name="keyword_index")
         all_results.extend(results)
     
     return jsonify(convert_objectid_to_str(all_results))

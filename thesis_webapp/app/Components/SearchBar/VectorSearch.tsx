@@ -23,8 +23,6 @@ export default function VectorSearchBar() {
   }
 
   function onSearch(event: React.FormEvent) {
-    event.preventDefault();
-
     console.log(advQuery);
     const encodedTitle = encodeURI(advQuery.title || "");
     const encodedCategory = encodeURI(advQuery.category || "");
@@ -35,6 +33,8 @@ export default function VectorSearchBar() {
         `&category=${encodedCategory}` +
         `&body=${encodedBody}`
     );
+
+    event.preventDefault();
   }
   return (
     <div className="mx-auto p-5">

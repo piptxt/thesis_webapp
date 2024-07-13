@@ -37,26 +37,40 @@ export default function VectorSearchBar() {
     );
   }
   return (
-    <div className="mx-auto p-5">
-      <form
-        className="max-w-5xl min-h-2 mx-auto text-start"
-        onSubmit={onSearch}
-      >
-        <div className="mb-2">
-          <textarea
-            name="title"
-            className="block w-full p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search here..."
-            onChange={handleChange}
-          />
-        </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Search
-        </button>
-      </form>
-    </div>
+    <>
+      <div className="mx-auto my-2">
+        <form className="max-w-6xl mx-auto" onSubmit={onSearch}>
+          <div className="relative flex items-center">
+            {" "}
+            {/* Add flex and items-center */}
+            <select
+              className="block p-4 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              // value={category}
+              // onChange={(event) => setCategory(event.target.value)}
+            >
+              <option value="All">All</option>
+              <option value="Act">Acts</option>
+              <option value="Supreme">Supreme Court</option>
+              <option value="Republic Acts">Republic Acts</option>
+              <option value="Commonwealth">Commonwealth Acts</option>
+              <option value="Batas">Batas Pambansa</option>
+            </select>
+            <textarea
+              id="default-search"
+              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2" // Add ml-2 for margin
+              placeholder="Search here..."
+              // value={query || ""}
+              // onChange={(event) => setQuery(event.target.value)}
+            />
+            <button
+              type="submit"
+              className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }

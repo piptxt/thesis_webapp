@@ -36,9 +36,9 @@ export default function SearchBar() {
               <option value="Supreme">Supreme Court</option>
               <option value="Republic Acts">Republic Acts</option>
               <option value="Commonwealth">Commonwealth Acts</option>
+              <option value="Batas">Batas Pambansa</option>
             </select>
-            <input
-              type="search"
+            <textarea
               id="default-search"
               className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2" // Add ml-2 for margin
               placeholder="Search here..."

@@ -1,26 +1,26 @@
-'use client'
+"use client";
 import Image from "next/image";
-import { useState, useEffect } from 'react';
-import H2 from '/public/heading/h2';
-import H3 from '/public/heading/h3';
+import { useState, useEffect } from "react";
+import H2 from "/public/heading/h2";
+import H3 from "/public/heading/h3";
 
 const isGif = (url) => {
-  return url.endsWith('.gif');
+  return url.endsWith(".gif");
 };
 
 const folders = [
   "Acts",
-  "Batas Pambata",
+  "Batas Pambansa",
   "Commonwealth Acts",
   "Republic Acts",
-  "Supreme Court"
+  "Supreme Court",
 ];
 
 const imagesSet1 = [
   "/images/UMAP/cosine_umap_visualization.png",
   "/images/UMAP/cosine_query_umap_visualization.png",
   "/images/UMAP/cosine_umap_visualization_3d.gif",
-  "/images/UMAP/cosine_query_3d_umap_zoom.gif"
+  "/images/UMAP/cosine_query_3d_umap_zoom.gif",
 ];
 
 const imagesSet2 = [
@@ -29,16 +29,16 @@ const imagesSet2 = [
   "/images/WordClouds/Batas Pambata_wordcloud.png",
   "/images/WordClouds/Commonwealth Acts_wordcloud.png",
   "/images/WordClouds/Republic Acts_wordcloud.png",
-  "/images/WordClouds/Supreme Court Jurisprudence_wordcloud.png"
+  "/images/WordClouds/Supreme Court Jurisprudence_wordcloud.png",
 ];
 
 const subtitlesSet2 = [
   "All Legal Documents",
   "Acts",
-  "Batas Pambata",
+  "Batas Pambansa",
   "Commonwealth Acts",
   "Republic Acts",
-  "Supreme Court"
+  "Supreme Court",
 ];
 
 const VisualSection = ({ initialImages }) => {
@@ -51,7 +51,10 @@ const VisualSection = ({ initialImages }) => {
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + currentImages.length) % currentImages.length);
+    setCurrentImageIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + currentImages.length) % currentImages.length
+    );
   };
 
   const handleDropdownChange = async (event) => {
@@ -85,7 +88,8 @@ const VisualSection = ({ initialImages }) => {
           width: 100%;
           padding-bottom: 75%; /* 4:3 aspect ratio */
         }
-        .image-container img, .image-container .next-image {
+        .image-container img,
+        .image-container .next-image {
           position: absolute;
           top: 0;
           left: 0;
@@ -122,54 +126,141 @@ const VisualSection = ({ initialImages }) => {
         <H2 className="text-center text-3xl font my-5">UMAP Visuals</H2>
         <div className="grid grid-cols-2 gap-4">
           {imagesSet1.map((image, idx) => (
-            <div key={idx} className="image-container" style={{ animation: `floatIn 1s ${idx * 0.2 + 0.5}s both` }}>
+            <div
+              key={idx}
+              className="image-container"
+              style={{ animation: `floatIn 1s ${idx * 0.2 + 0.5}s both` }}
+            >
               {isGif(image) ? (
-                <img src={image} alt={`UMAP Image ${idx + 1}`} className="rounded-lg" loop autoPlay />
+                <img
+                  src={image}
+                  alt={`UMAP Image ${idx + 1}`}
+                  className="rounded-lg"
+                  loop
+                  autoPlay
+                />
               ) : (
-                <Image src={image} alt={`UMAP Image ${idx + 1}`} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
+                <Image
+                  src={image}
+                  alt={`UMAP Image ${idx + 1}`}
+                  layout="fill"
+                  objectFit="contain"
+                  className="next-image rounded-lg"
+                  unoptimized
+                />
               )}
             </div>
           ))}
         </div>
-        
-        <H2 className="text-center text-3xl font my-5 mt-10">Wordcloud Visuals</H2>
-        <div className="flex justify-center mb-6" style={{ animation: `floatIn 1s both` }}>
+
+        <H2 className="text-center text-3xl font my-5 mt-10">
+          Wordcloud Visuals
+        </H2>
+        <div
+          className="flex justify-center mb-6"
+          style={{ animation: `floatIn 1s both` }}
+        >
           <div className="small-image-container">
             {isGif(imagesSet2[0]) ? (
-              <img src={imagesSet2[0]} alt={`Wordcloud`} className="rounded-lg" loop autoPlay />
+              <img
+                src={imagesSet2[0]}
+                alt={`Wordcloud`}
+                className="rounded-lg"
+                loop
+                autoPlay
+              />
             ) : (
-              <Image src={imagesSet2[0]} alt={`Wordcloud`} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
+              <Image
+                src={imagesSet2[0]}
+                alt={`Wordcloud`}
+                layout="fill"
+                objectFit="contain"
+                className="next-image rounded-lg"
+                unoptimized
+              />
             )}
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
           {imagesSet2.slice(1, 5).map((image, idx) => (
-            <div key={idx} className="image-container" style={{ animation: `floatIn 1s ${idx * 0.2 + 0.5}s both` }}>
+            <div
+              key={idx}
+              className="image-container"
+              style={{ animation: `floatIn 1s ${idx * 0.2 + 0.5}s both` }}
+            >
               {isGif(image) ? (
-                <img src={image} alt={subtitlesSet2[idx + 1]} className="rounded-lg" loop autoPlay />
+                <img
+                  src={image}
+                  alt={subtitlesSet2[idx + 1]}
+                  className="rounded-lg"
+                  loop
+                  autoPlay
+                />
               ) : (
-                <Image src={image} alt={subtitlesSet2[idx + 1]} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
+                <Image
+                  src={image}
+                  alt={subtitlesSet2[idx + 1]}
+                  layout="fill"
+                  objectFit="contain"
+                  className="next-image rounded-lg"
+                  unoptimized
+                />
               )}
               <H3 className="text-center mt-2">{subtitlesSet2[idx + 1]}</H3>
             </div>
           ))}
-          <div key={5} className="image-container col-start-3" style={{ animation: `floatIn 1s 2.5s both` }}>
+          <div
+            key={5}
+            className="image-container col-start-3"
+            style={{ animation: `floatIn 1s 2.5s both` }}
+          >
             {isGif(imagesSet2[5]) ? (
-              <img src={imagesSet2[5]} alt={subtitlesSet2[5]} className="rounded-lg" loop autoPlay />
+              <img
+                src={imagesSet2[5]}
+                alt={subtitlesSet2[5]}
+                className="rounded-lg"
+                loop
+                autoPlay
+              />
             ) : (
-              <Image src={imagesSet2[5]} alt={subtitlesSet2[5]} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
+              <Image
+                src={imagesSet2[5]}
+                alt={subtitlesSet2[5]}
+                layout="fill"
+                objectFit="contain"
+                className="next-image rounded-lg"
+                unoptimized
+              />
             )}
             <H3 className="text-center mt-2">{subtitlesSet2[5]}</H3>
           </div>
         </div>
 
-        <H2 className="text-center text-3xl font my-5 mt-10">Wordcount Visuals</H2>
-        <div className="flex justify-center mb-6" style={{ animation: `floatIn 1s both` }}>
+        <H2 className="text-center text-3xl font my-5 mt-10">
+          Wordcount Visuals
+        </H2>
+        <div
+          className="flex justify-center mb-6"
+          style={{ animation: `floatIn 1s both` }}
+        >
           <div className="small-image-container">
             {isGif(currentImages[currentImageIndex]) ? (
-              <img src={currentImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} className="rounded-lg" loop autoPlay />
+              <img
+                src={currentImages[currentImageIndex]}
+                alt={`Image ${currentImageIndex + 1}`}
+                className="rounded-lg"
+                loop
+                autoPlay
+              />
             ) : (
-              <Image src={currentImages[currentImageIndex]} alt={`Image ${currentImageIndex + 1}`} layout="fill" objectFit="contain" className="next-image rounded-lg" unoptimized />
+              <Image
+                src={currentImages[currentImageIndex]}
+                alt={`Image ${currentImageIndex + 1}`}
+                layout="fill"
+                objectFit="contain"
+                className="next-image rounded-lg"
+                unoptimized
+              />
             )}
           </div>
         </div>
@@ -177,12 +268,18 @@ const VisualSection = ({ initialImages }) => {
           <button onClick={prevImage}>Previous</button>
           <button onClick={nextImage}>Next</button>
         </div>
-        
+
         {/* Dropdown to select image set */}
         <div className="flex justify-center mt-10">
-          <select onChange={handleDropdownChange} value={selectedFolder} className="p-2 border rounded">
+          <select
+            onChange={handleDropdownChange}
+            value={selectedFolder}
+            className="p-2 border rounded"
+          >
             {folders.map((folder) => (
-              <option key={folder} value={folder}>{folder}</option>
+              <option key={folder} value={folder}>
+                {folder}
+              </option>
             ))}
           </select>
         </div>

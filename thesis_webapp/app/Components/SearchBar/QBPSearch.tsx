@@ -1,62 +1,53 @@
 "use client";
 
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { GetServerSideProps } from "next";
+import { useExtractedText } from '../Contexts/ExtractedTextContext';
+import { ChangeEvent } from 'react';
 
 export default function QBPSearchBar() {
-  const search = useSearchParams();
-  const [advQuery, setAdvQuery] = useState({
-    title: "",
-    category: "",
-    body: "",
-  });
-  const router = useRouter();
+  const { setExtractedText } = useExtractedText();
 
-  function handleChange(e: any) {
-    const name = e.target.name;
-    const value = e.target.value;
+  async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file && file.type === 'application/pdf') {
+      const formData = new FormData();
+      formData.append('file', file);
 
-    setAdvQuery((prev) => {
-      return { ...prev, [name]: value };
-    });
+      try {
+        const response = await fetch('http://localhost:3001/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload file');
+        }
+
+        const data = await response.json();
+        setExtractedText({
+          title: '', // Customize this if needed
+          category: '', // Customize this if needed
+          body: data.text,
+        });
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
   }
 
-  function onSearch(event: React.FormEvent) {
-    console.log(advQuery);
-    const encodedTitle = encodeURI(advQuery.title || "");
-    const encodedCategory = encodeURI(advQuery.category || "");
-    const encodedBody = encodeURI(advQuery.body || "");
-
-    router.push(
-      `/hybrid_search?title=${encodedTitle}` +
-        `&category=${encodedCategory}` +
-        `&body=${encodedBody}`
-    );
-
-    event.preventDefault();
-  }
   return (
     <div className="mx-auto p-5">
-      <form
-        className="max-w-5xl min-h-2 mx-auto text-start"
-        onSubmit={onSearch}
-      >
+      <form className="max-w-5xl min-h-2 mx-auto text-start">
         <div className="mb-2">
           <input
-            name="title"
             type="file"
+            accept="application/pdf"
             className="block w-full p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search here... QBP"
-            onChange={handleChange}
+            onChange={handleFileChange}
           />
         </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Search
-        </button>
       </form>
     </div>
   );

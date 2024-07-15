@@ -1,13 +1,19 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect} from "react";
+import { useExtractedText } from '../Contexts/ExtractedTextContext';
 
 export default function SearchBar() {
+  const { extractedText } = useExtractedText();
   const search = useSearchParams();
   const [query, setQuery] = useState(search ? search.get("q") : null);
   const [category, setCategory] = useState("all"); // Add state for dropdown
   const router = useRouter();
+
+  useEffect(() => {
+    setQuery(extractedText.body);
+  }, [extractedText]);
 
   function onSearch(event: React.FormEvent) {
     event.preventDefault();

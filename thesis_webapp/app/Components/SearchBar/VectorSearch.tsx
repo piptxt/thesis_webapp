@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect} from "react";
+import { useExtractedText } from '../Contexts/ExtractedTextContext';
 
 type AdvQuery = {
   query: string;
@@ -9,6 +10,7 @@ type AdvQuery = {
 };
 
 export default function VectorSearchBar() {
+  const { extractedText } = useExtractedText();
   const [advQuery, setAdvQuery] = useState<AdvQuery>({
     query: "",
     category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"], // Default to all categories
@@ -22,6 +24,13 @@ export default function VectorSearchBar() {
     "Commonwealth",
     "Batas",
   ];
+
+  useEffect(() => {
+    setAdvQuery((prev) => ({
+      ...prev,
+      query: extractedText.body
+    }));
+  }, [extractedText]);
 
   function handleChange(e: any) {
     const name = e.target.name;

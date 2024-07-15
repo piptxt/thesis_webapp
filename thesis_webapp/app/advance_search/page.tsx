@@ -23,16 +23,14 @@ const fetchMovies = async (url: string) => {
 
 export default function AdvancedSearchResultsPage() {
   const search = useSearchParams();
-  const title = search ? search.get("title") : "";
+  const query = search ? search.get("query") : "";
   const category = search ? search.get("category") : "";
-  const body = search ? search.get("body") : "";
 
-  const encodedTitle = encodeURIComponent(title || "");
+  const encodedQuery = encodeURIComponent(query || "");
   const encodedCategory = encodeURIComponent(category || "");
-  const encodedBody = encodeURIComponent(body || "");
 
   const { data, error, isLoading } = useSWR(
-    `/api/advance_search?title=${encodedTitle}&category=${encodedCategory}&body=${encodedBody}`,
+    `/api/advance_search?query=${encodedQuery}&category=${encodedCategory}`,
     fetchMovies
   );
 

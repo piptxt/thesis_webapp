@@ -16,7 +16,12 @@ export default function SearchBar() {
     const encodedCategory = encodeURI(category || "");
     router.push(
       `/search?basic_search=${encodedSearchQuery}&category=${encodedCategory}`
-    ); // Include category in query
+    );
+  }
+
+  function onClear() {
+    setQuery("");
+    setCategory("all");
   }
 
   return (
@@ -24,8 +29,6 @@ export default function SearchBar() {
       <div className="mx-auto my-2">
         <form className="max-w-6xl mx-auto" onSubmit={onSearch}>
           <div className="relative flex items-center">
-            {" "}
-            {/* Add flex and items-center */}
             <select
               className="block p-4 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               value={category}
@@ -40,14 +43,21 @@ export default function SearchBar() {
             </select>
             <textarea
               id="default-search"
-              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2" // Add ml-2 for margin
+              className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2"
               placeholder="Search here..."
               value={query || ""}
               onChange={(event) => setQuery(event.target.value)}
             />
             <button
+              type="button"
+              className="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 ml-2"
+              onClick={onClear}
+            >
+              Clear
+            </button>
+            <button
               type="submit"
-              className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 ml-2"
             >
               Search
             </button>

@@ -15,7 +15,13 @@ export default function VectorSearchBar() {
   });
   const router = useRouter();
 
-  const categories = ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"];
+  const categories = [
+    "Act",
+    "Supreme",
+    "Republic Acts",
+    "Commonwealth",
+    "Batas",
+  ];
 
   function handleChange(e: any) {
     const name = e.target.name;
@@ -43,9 +49,15 @@ export default function VectorSearchBar() {
     const encodedCategory = encodeURI(advQuery.category.join(",") || "");
 
     router.push(
-      `/advance_search?query=${encodedQuery}` +
-        `&category=${encodedCategory}`
+      `/advance_search?query=${encodedQuery}` + `&category=${encodedCategory}`
     );
+  }
+
+  function onClear() {
+    setAdvQuery({
+      query: "",
+      category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"],
+    });
   }
 
   return (
@@ -73,16 +85,26 @@ export default function VectorSearchBar() {
               name="query"
               className="block w-full h-24 p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2"
               placeholder="Search here...VECTORR"
+              value={advQuery.query}
               onChange={handleChange}
             />
           </div>
         </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Search
-        </button>
+        <div className="flex space-x-2">
+          <button
+            type="button"
+            className="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2"
+            onClick={onClear}
+          >
+            Clear
+          </button>
+          <button
+            type="submit"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Search
+          </button>
+        </div>
       </form>
     </div>
   );

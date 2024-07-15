@@ -4,14 +4,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { GetServerSideProps } from "next";
 
+type AdvQuery = {
+  query: string;
+  category: string[];
+};
+
 export default function HybridSearchBar() {
-  const search = useSearchParams();
-  const [advQuery, setAdvQuery] = useState({
-    title: "",
-    category: "",
-    body: "",
+  const [advQuery, setAdvQuery] = useState<AdvQuery>({
+    query: "",
+    category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"], // Default to all categories
   });
   const router = useRouter();
+
+  const categories = ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"];
 
   function handleChange(e: any) {
     const name = e.target.name;
@@ -22,19 +27,27 @@ export default function HybridSearchBar() {
     });
   }
 
+  function handleCheckboxChange(e: any) {
+    const value = e.target.value;
+
+    setAdvQuery((prev) => {
+      const newCategory = prev.category.includes(value)
+        ? prev.category.filter((item) => item !== value)
+        : [...prev.category, value];
+      return { ...prev, category: newCategory };
+    });
+  }
+
   function onSearch(event: React.FormEvent) {
-    console.log(advQuery);
-    const encodedTitle = encodeURI(advQuery.title || "");
-    const encodedCategory = encodeURI(advQuery.category || "");
-    const encodedBody = encodeURI(advQuery.body || "");
+    event.preventDefault();
+    const encodedQuery = encodeURI(advQuery.query || "");
+    const encodedCategory = encodeURI(advQuery.category.join(",") || "");
 
     router.push(
-      `/hybrid_search?title=${encodedTitle}` +
-        `&category=${encodedCategory}` +
-        `&body=${encodedBody}`
+      `/hybrid_search?query=${encodedQuery}` +
+        `&category=${encodedCategory}`
     );
 
-    event.preventDefault();
   }
   return (
     <div className="mx-auto p-5">
@@ -42,13 +55,28 @@ export default function HybridSearchBar() {
         className="max-w-5xl min-h-2 mx-auto text-start"
         onSubmit={onSearch}
       >
-        <div className="mb-2">
-          <textarea
-            name="title"
-            className="block w-full p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search here... HYBRIDDDD"
-            onChange={handleChange}
-          />
+        <div className="flex">
+          <div className="mb-2 p-4 border border-gray-300 rounded-lg">
+            {categories.map((category) => (
+              <label key={category} className="block mb-1">
+                <input
+                  type="checkbox"
+                  value={category}
+                  checked={advQuery.category.includes(category)}
+                  onChange={handleCheckboxChange}
+                />
+                {category}
+              </label>
+            ))}
+          </div>
+          <div className="mb-2 flex-grow">
+            <textarea
+              name="query"
+              className="block w-full h-24 p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2"
+              placeholder="Search here...HYBRIDD"
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <button
           type="submit"

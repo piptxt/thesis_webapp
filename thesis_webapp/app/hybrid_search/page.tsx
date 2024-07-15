@@ -53,7 +53,7 @@ export default function AdvancedSearchResultsPage() {
         href={{
           pathname: "document_page",
           query: {
-            id: document._id,
+            id: document.document_id,
           },
         }}
       >

@@ -6,17 +6,25 @@ import clientPromise from "@/lib/mongodb";
 import SearchBars from "../Components/SearchBar/SearchBars";
 
 export default async function DocumentPage({ searchParams }) {
-  let document: any;
-  const { ObjectId } = require("mongodb");
+  let document = null; // Initialize document as null initially
 
-  // LAZY AND UNPROPER WAY OF FETCHING DATA - NOT USING ROUTES - WILL FIX
   try {
+    const { ObjectId } = require("mongodb");
     const client = await clientPromise;
     const db = client.db("Thesis");
+
     document = await db
       .collection("Documents")
       .findOne({ _id: new ObjectId(searchParams.id) });
-  } catch {}
+
+    // if (document) {
+    //   console.log("Document found:", document);
+    // } else {
+    //   console.log("Document not found for id:", searchParams.id);
+    // }
+  } catch (error) {
+    console.error("Error fetching document:", error);
+  }
 
   return (
     <>
@@ -25,10 +33,10 @@ export default async function DocumentPage({ searchParams }) {
 
       <main className="mx-auto my-15 p-5 w-3/4 border rounded-lg">
         <h2 className="text-4xl mt-1 font-semibold text-sky-700 text-center">
-          {document.title}
+          {document ? document.title : "Loading..."}
         </h2>
         <p className="text-sm mt-4 text-gray-600 indent-4 leading-loose">
-          {document.text}
+          {document ? document.text : "Loading..."}
         </p>
       </main>
     </>

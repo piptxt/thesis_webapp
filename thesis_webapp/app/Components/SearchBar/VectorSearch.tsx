@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect} from "react";
-import { useExtractedText } from '../Contexts/ExtractedTextContext';
+import { useState, useEffect } from "react";
+import { useExtractedText } from "../Contexts/ExtractedTextContext";
 
 type AdvQuery = {
   query: string;
@@ -28,7 +28,7 @@ export default function VectorSearchBar() {
   useEffect(() => {
     setAdvQuery((prev) => ({
       ...prev,
-      query: extractedText.body
+      query: extractedText.body,
     }));
   }, [extractedText]);
 

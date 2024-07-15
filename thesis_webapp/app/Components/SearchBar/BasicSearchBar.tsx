@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect} from "react";
-import { useExtractedText } from '../Contexts/ExtractedTextContext';
+import { useState, useEffect } from "react";
+import { useExtractedText } from "../Contexts/ExtractedTextContext";
 
 export default function SearchBar() {
   const { extractedText } = useExtractedText();
@@ -17,7 +17,6 @@ export default function SearchBar() {
 
   function onSearch(event: React.FormEvent) {
     event.preventDefault();
-
     const encodedSearchQuery = encodeURI(query || "");
     const encodedCategory = encodeURI(category || "");
     router.push(

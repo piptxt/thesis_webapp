@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useExtractedText } from '../Contexts/ExtractedTextContext';
+import { useExtractedText } from "../Contexts/ExtractedTextContext";
 
 type AdvQuery = {
   query: string;
@@ -28,7 +28,7 @@ export default function HybridSearchBar() {
   useEffect(() => {
     setAdvQuery((prev) => ({
       ...prev,
-      query: extractedText.body
+      query: extractedText.body,
     }));
   }, [extractedText]);
 

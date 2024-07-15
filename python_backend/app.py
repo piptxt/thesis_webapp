@@ -104,7 +104,8 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
                 "title": 1,
                 "category": 1,
                 "chunk": 1,
-                "score": {"$meta": "vectorSearchScore"}
+                "document_id":  {"$toString": "$document_id"},
+                "score": {"$meta": "vectorSearchScore"},
             }
         }
     ])
@@ -210,10 +211,12 @@ def vector_results():
             },
             {
                 "$project": {
+                    "_id": 1,
                     "title": 1,
                     "category": 1,
                     "chunk": 1,
-                    "score": {"$meta": "vectorSearchScore"}
+                    "document_id":  {"$toString": "$document_id"},
+                    "score": {"$meta": "vectorSearchScore"},
                 }
             }
         ])

@@ -28,6 +28,11 @@ export default async function handler(
                   text: {
                     query: query,
                     path: "title",
+                    score: {
+                      boost: {
+                        value: 2,
+                      },
+                    },
                   },
                 },
                 {

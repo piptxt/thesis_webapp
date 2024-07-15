@@ -5,6 +5,7 @@ import AdvancedSearchBar from "./AdvancedSearchBar";
 import SearchBar from "./BasicSearchBar";
 import VectorSearchBar from "./VectorSearch";
 import HybridSearchBar from "./HybridSearch";
+import QBPSearchBar from "./QBPSearch";
 
 export default function SearchBars() {
   const [searchType, setSearchType] = useState("basic");
@@ -42,11 +43,22 @@ export default function SearchBars() {
         >
           Hybrid Search
         </button>
+        <button
+          onClick={() => setSearchType("qbp")}
+          className={`border rounded-lg px-5 py-2 font-bold transition duration-300 ease-in-out ${
+            searchType === "qbp"
+              ? "bg-blue-500 text-white hover:bg-blue-600"
+              : "bg-white hover:bg-gray-100"
+          }`}
+        >
+          Query By PDF
+        </button>
       </div>
       <div className="w-full transition duration-300 ease-in-out">
         {searchType === "basic" && <SearchBar />}
         {searchType === "vector" && <VectorSearchBar />}
         {searchType === "hybrid" && <HybridSearchBar />}
+        {searchType === "qbp" && <QBPSearchBar />}
       </div>
     </div>
   );

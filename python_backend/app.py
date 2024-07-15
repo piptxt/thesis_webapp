@@ -78,7 +78,8 @@ def weighted_reciprocal_rank(doc_lists):
     
     return sorted_docs
 
-def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
+def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index_name):
+    print(category)
     # vector search
     query_vector = generate_embedding(query)
 
@@ -87,10 +88,15 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
             "$vectorSearch": {
                 "queryVector": query_vector,
                 "path": "chunk_embedding",
-                "numCandidates": 100,
+                "numCandidates": 10000,
                 "limit": top_k,
                 "index": vector_index_name
             },
+        },
+        {
+            "$match": {
+                "category": {"$in": category}
+            }
         },
         {
             "$project": {
@@ -105,6 +111,7 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
     vector_results = list(vector_results)
     # TRIAL ----------------------
     print("Vector Results:")
+    print(len(vector_results))
     for doc in vector_results:
       print(f'Title: {doc["title"]}, Score: {doc["score"]}')
     print("--------------------------------------------------------")
@@ -120,8 +127,17 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
                 }
             }
         },
-        {"$addFields": {"score": {"$meta": "searchScore"}}},
-        {"$limit": top_k}
+        {
+            "$addFields": {"score": {"$meta": "searchScore"}}
+        },
+        {
+            "$match": {
+                "category": {"$in": category}
+            }
+        },
+        {
+            "$limit": top_k
+        }
     ])
     keyword_results = list(keyword_results)
     # TRIAL ----------------------
@@ -142,7 +158,7 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
     # Enforce that retrieved docs are the same form for each list in retriever_docs
     for i in range(len(doc_lists)):
         doc_lists[i] = [
-            {"_id": doc["_id"], "title": doc["title"], "title": doc["title"], "score": doc["score"]}
+            {"_id": doc["_id"], "title": doc["title"], "category": doc["category"], "chunk": doc["chunk"], "score": doc["score"]}
             for doc in doc_lists[i]
         ]
 
@@ -150,14 +166,19 @@ def atlas_hybrid_search(query, top_k, vector_index_name, keyword_index_name):
     fused_documents = weighted_reciprocal_rank(doc_lists)
     print("Fused Docs Results:")
     for doc in fused_documents:
-      print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+      print(f'Title: {doc["title"]}, Score: {doc["rrf_score"]}')
     print("--------------------------------------------------------")
     return fused_documents
 
-@app.route('/aggregate_results', methods=['POST'])
-def aggregate_results():
+@app.route('/vector_results', methods=['POST'])
+def vector_results():
     data = request.json
     text = data.get("text", "")
+    category = data.get("category", [])
+
+    # Split the category string into a list if it's a string
+    if isinstance(category, str):
+        category = category.split(',')
 
     # Determine if the query is a string, paragraph, or document
     if isinstance(text, str):
@@ -176,10 +197,15 @@ def aggregate_results():
                 "$vectorSearch": {
                     "queryVector": generate_embedding(chunk),
                     "path": "chunk_embedding",
-                    "numCandidates": 100,
-                    "limit": 5,
+                    "numCandidates": 10000,
+                    "limit": 100,
                     "index": "vectorsearch_index",
                     "includeMetadata": True
+                }
+            },
+            {
+                "$match": {
+                    "category": {"$in": category}
                 }
             },
             {
@@ -196,19 +222,25 @@ def aggregate_results():
         results = convert_objectid_to_str(results)
 
         for result in results:
-            result["query_chunk"] = chunk
+            # result["query_chunk"] = chunk
             all_results.append(result)
 
     # Aggregate results based on score (optional)
     # Here, we simply return all results, but you can add logic to combine scores if needed
 
-    print(all_results)
+    # print(all_results)
+    print(category)
     return jsonify(all_results)
 
 @app.route('/hybrid_results', methods=['POST'])
 def hybrid_results():
     data = request.json
     text = data.get("text", "")
+    category = data.get("category", [])
+
+    # Split the category string into a list if it's a string
+    if isinstance(category, str):
+        category = category.split(',')
 
     if isinstance(text, str):
         chunks = split_chunks(text)
@@ -220,7 +252,7 @@ def hybrid_results():
     all_results = []
 
     for chunk in chunks:
-        results = atlas_hybrid_search(chunk, top_k=5, vector_index_name="vectorsearch_index", keyword_index_name="keyword_index")
+        results = atlas_hybrid_search(chunk, category, top_k=100, vector_index_name="vectorsearch_index", keyword_index_name="keyword_index")
         all_results.extend(results)
     
     return jsonify(convert_objectid_to_str(all_results))

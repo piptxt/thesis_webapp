@@ -23,16 +23,14 @@ const fetchMovies = async (url: string) => {
 
 export default function AdvancedSearchResultsPage() {
   const search = useSearchParams();
-  const title = search ? search.get("title") : "";
+  const query = search ? search.get("query") : "";
   const category = search ? search.get("category") : "";
-  const body = search ? search.get("body") : "";
 
-  const encodedTitle = encodeURIComponent(title || "");
+  const encodedQuery = encodeURIComponent(query || "");
   const encodedCategory = encodeURIComponent(category || "");
-  const encodedBody = encodeURIComponent(body || "");
 
   const { data, error, isLoading } = useSWR(
-    `/api/hybrid_search?title=${encodedTitle}&category=${encodedCategory}&body=${encodedBody}`,
+    `/api/hybrid_search?query=${encodedQuery}&category=${encodedCategory}`,
     fetchMovies
   );
 
@@ -65,7 +63,7 @@ export default function AdvancedSearchResultsPage() {
           </h2>
           <h2 className="text-sm text-gray-600">{document.category}</h2>
           <h2 className="text-base mt-1 font-sm text-gray-600">
-            Relevancy Score: {document.score}
+            Relevancy Score: {document.rrf_score}
           </h2>
           <p className="text-sm mt-4 line-clamp-2 text-gray-600">
             {document.chunk}

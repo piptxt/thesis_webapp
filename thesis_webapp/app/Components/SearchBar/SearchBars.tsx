@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import AdvancedSearchBar from "./AdvancedSearchBar";
 import SearchBar from "./BasicSearchBar";
 import VectorSearchBar from "./VectorSearch";
 import HybridSearchBar from "./HybridSearch";

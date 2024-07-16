@@ -33,6 +33,7 @@ export default function HybridSearchBar() {
   }, [extractedText]);
 
   function handleChange(e: any) {
+    e.preventDefault();
     const name = e.target.name;
     const value = e.target.value;
 
@@ -42,6 +43,7 @@ export default function HybridSearchBar() {
   }
 
   function handleCheckboxChange(e: any) {
+    e.preventDefault();
     const value = e.target.value;
 
     setAdvQuery((prev) => {

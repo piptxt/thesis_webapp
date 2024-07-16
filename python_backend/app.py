@@ -80,7 +80,7 @@ def weighted_reciprocal_rank(doc_lists):
 
 def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index_name):
     print(category)
-    # vector search
+    # Vector search
     query_vector = generate_embedding(query)
 
     vector_results = collection.aggregate([
@@ -104,7 +104,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
                 "title": 1,
                 "category": 1,
                 "chunk": 1,
-                "document_id":  {"$toString": "$document_id"},
+                "document_id": {"$toString": "$document_id"},
                 "score": {"$meta": "vectorSearchScore"},
             }
         }
@@ -114,10 +114,10 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
     print("Vector Results:")
     print(len(vector_results))
     for doc in vector_results:
-      print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+        print(f'Title: {doc["title"]}, Score: {doc["score"]}')
     print("--------------------------------------------------------")
 
-    #keyword search 
+    # Keyword search
     keyword_results = collection.aggregate([
         {
             "$search": {
@@ -138,38 +138,49 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
         },
         {
             "$limit": top_k
+        },
+        {
+            "$project": {
+                "_id": 1,
+                "title": 1,
+                "category": 1,
+                "chunk": 1,
+                "document_id": {"$toString": "$document_id"},
+                "score": {"$meta": "searchScore"},
+            }
         }
     ])
     keyword_results = list(keyword_results)
     # TRIAL ----------------------
     print("Keyword Results:")
     for doc in keyword_results:
-      print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+        print(f'Title: {doc["title"]}, Score: {doc["score"]}')
     print("--------------------------------------------------------")
 
     doc_lists = [vector_results, keyword_results]
     # TRIAL ----------------------
     print("Doc Lists Results:")
     for doc_list in doc_lists:
-      for doc in doc_list:
-        print(f'Title: {doc["title"]}, Score: {doc["score"]}')
-      print("---------------------------")
+        for doc in doc_list:
+            print(f'Title: {doc["title"]}, Score: {doc["score"]}')
+        print("---------------------------")
     print("--------------------------------------------------------")
 
     # Enforce that retrieved docs are the same form for each list in retriever_docs
     for i in range(len(doc_lists)):
         doc_lists[i] = [
-            {"_id": doc["_id"], "title": doc["title"], "category": doc["category"], "chunk": doc["chunk"], "score": doc["score"]}
+            {"_id": doc["_id"], "title": doc["title"], "category": doc["category"], "chunk": doc["chunk"], "document_id": doc["document_id"], "score": doc["score"]}
             for doc in doc_lists[i]
         ]
 
-    # apply rank fusion
+    # Apply rank fusion
     fused_documents = weighted_reciprocal_rank(doc_lists)
     print("Fused Docs Results:")
     for doc in fused_documents:
-      print(f'Title: {doc["title"]}, Score: {doc["rrf_score"]}')
+        print(f'Title: {doc["title"]}, Document ID: {doc["document_id"]}, Score: {doc["rrf_score"]}')
     print("--------------------------------------------------------")
     return fused_documents
+
 
 @app.route('/vector_results', methods=['POST'])
 def vector_results():

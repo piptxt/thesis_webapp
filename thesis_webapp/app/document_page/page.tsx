@@ -1,12 +1,12 @@
 import { useSearchParams } from "next/navigation";
 import NavBar from "../Components/NavBar/NavBar";
-import SearchBar from "../Components/SearchBar/BasicSearchBar";
-import AdvancedSearchBar from "../Components/SearchBar/AdvancedSearchBar";
 import clientPromise from "@/lib/mongodb";
 import SearchBars from "../Components/SearchBar/SearchBars";
 
 export default async function DocumentPage({ searchParams }) {
   let document = null; // Initialize document as null initially
+  let chunks = null;
+  let highlighted_text = null;
 
   try {
     const { ObjectId } = require("mongodb");
@@ -16,6 +16,17 @@ export default async function DocumentPage({ searchParams }) {
     document = await db
       .collection("Documents")
       .findOne({ _id: new ObjectId(searchParams.id) });
+
+    const docu = await db
+      .collection("Flattened")
+      .find({ document_id: new ObjectId(searchParams.id) })
+      .toArray();
+    chunks = docu.map((item) => item.chunk);
+
+    const highlighted_chunk = await db
+      .collection("Flattened")
+      .findOne({ _id: new ObjectId(searchParams.chunk) });
+    highlighted_text = highlighted_chunk ? highlighted_chunk.chunk : "";
 
     // if (document) {
     //   console.log("Document found:", document);
@@ -35,9 +46,21 @@ export default async function DocumentPage({ searchParams }) {
         <h2 className="text-4xl mt-1 font-semibold text-sky-700 text-center">
           {document ? document.title : "Loading..."}
         </h2>
-        <p className="text-sm mt-4 text-gray-600 indent-4 leading-loose">
-          {document ? document.text : "Loading..."}
-        </p>
+
+        {chunks
+          ? chunks.map((chunk, i) => (
+              <p
+                key={i}
+                className={`text-sm mt-4 indent-4 leading-loose ${
+                  chunk === highlighted_text
+                    ? "bg-yellow-200" // Apply yellow background if chunk matches highlighted_text
+                    : ""
+                }`}
+              >
+                {chunk}
+              </p>
+            ))
+          : "Loading..."}
       </main>
     </>
   );

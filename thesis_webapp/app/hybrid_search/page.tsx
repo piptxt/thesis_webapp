@@ -54,6 +54,7 @@ export default function AdvancedSearchResultsPage() {
           pathname: "document_page",
           query: {
             id: document.document_id,
+            chunk: document._id,
           },
         }}
       >

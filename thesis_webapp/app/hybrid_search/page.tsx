@@ -78,7 +78,7 @@ export default function AdvancedSearchResultsPage() {
       <NavBar />
       <SearchBars />
       <ul className="m-auto w-2/3">
-        <p className="mx-5 text-xl font-semibold">Search Results:</p>
+        <p className="mx-5 text-xl font-semibold">Hybrid Search Results:</p>
         {DocumentList}
       </ul>
     </>

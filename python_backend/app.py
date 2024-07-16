@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import pymongo
@@ -6,6 +7,7 @@ import certifi
 from bson import ObjectId
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # MongoDB Connection
 client = pymongo.MongoClient("mongodb+srv://pipo:snvQQfMSbJwDchjN@cluster0.yzkq3xh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",tlsCAFile=certifi.where())
@@ -270,6 +272,14 @@ def hybrid_results():
         all_results.extend(results)
     
     return jsonify(convert_objectid_to_str(all_results))
+
+@app.route('/split_to_chunks', methods=['POST'])
+def split_to_chunks():
+    data = request.json
+    text = data.get("text", "")
+    chunks = split_chunks(text)
+    print(chunks)
+    return jsonify(chunks)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

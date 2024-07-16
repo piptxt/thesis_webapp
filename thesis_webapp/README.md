@@ -41,4 +41,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 1. Open another terminal.
 2. Optional: Create virtual environment if you can.
 3. Paste this [pip install -r requirements.txt].
-4. Then, paste this [python app.py].
+4. Then, paste this [python app.py]. 

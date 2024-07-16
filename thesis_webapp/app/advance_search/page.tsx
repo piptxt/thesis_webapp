@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import NavBar from "../Components/NavBar/NavBar";
 import SearchBars from "../Components/SearchBar/SearchBars";
 import Link from "next/link";
@@ -23,8 +23,11 @@ const fetchMovies = async (url: string) => {
 
 export default function AdvancedSearchResultsPage() {
   const search = useSearchParams();
+  const router = useRouter();
   const query = search ? search.get("query") : "";
   const category = search ? search.get("category") : "";
+  const chunksParam = search ? search.get("chunks") || "[]" : "[]"; // Provide a default value of an empty array
+  const chunks = JSON.parse(chunksParam);
 
   const encodedQuery = encodeURIComponent(query || "");
   const encodedCategory = encodeURIComponent(category || "");
@@ -74,14 +77,40 @@ export default function AdvancedSearchResultsPage() {
     ));
   }
 
+  function handleChunkClick(chunk: string) {
+    const encodedQuery = encodeURI(chunk);
+    const encodedCategory = encodeURI(category || "");
+
+    router.push(`/advance_search?query=${encodedQuery}&category=${encodedCategory}&type=vector&chunks=${chunksParam}`);
+  }
+
   return (
     <>
       <NavBar />
-      <SearchBars />
-      <ul className="m-auto w-2/3">
-        <p className="mx-5 text-xl font-semibold">Search Results:</p>
-        {DocumentList}
-      </ul>
+      <div className="flex">
+        <div className="w-1/4 p-4 border-r border-gray-300">
+          <h3 className="text-xl font-semibold mb-4">Chunks</h3>
+          <ul>
+            {chunks.map((chunk: string, index: number) => (
+              <li key={index} className="mb-2">
+                <button
+                  className="text-blue-700 hover:underline"
+                  onClick={() => handleChunkClick(chunk)}
+                >
+                  {chunk.slice(0, 50)}...
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="w-3/4">
+          <SearchBars />
+          <ul className="m-auto w-2/3">
+            <p className="mx-5 text-xl font-semibold">Vector Search Results:</p>
+            {DocumentList}
+          </ul>
+        </div>
+      </div>
     </>
   );
 }

@@ -2,3 +2,4 @@ flask
 sentence-transformers
 langchain
 pymongo
+flask_cors

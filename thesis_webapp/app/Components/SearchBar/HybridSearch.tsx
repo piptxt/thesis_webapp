@@ -59,9 +59,7 @@ export default function HybridSearchBar() {
     const encodedQuery = encodeURI(advQuery.query || "");
     const encodedCategory = encodeURI(advQuery.category.join(",") || "");
 
-    router.push(
-      `/hybrid_search?query=${encodedQuery}` + `&category=${encodedCategory}`
-    );
+    router.push(`/hybrid_search?query=${encodedQuery}` + `&category=${encodedCategory}&type=hybrid`);
   }
 
   function onClear() {

@@ -33,6 +33,8 @@ export default function VectorSearchBar() {
   }, [extractedText]);
 
   function handleChange(e: any) {
+    e.preventDefault();
+
     const name = e.target.name;
     const value = e.target.value;
 
@@ -42,6 +44,7 @@ export default function VectorSearchBar() {
   }
 
   function handleCheckboxChange(e: any) {
+    e.preventDefault();
     const value = e.target.value;
 
     setAdvQuery((prev) => {

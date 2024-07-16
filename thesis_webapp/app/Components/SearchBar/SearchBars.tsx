@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import AdvancedSearchBar from "./AdvancedSearchBar";
+import { useState } from "react";
 import SearchBar from "./BasicSearchBar";
 import VectorSearchBar from "./VectorSearch";
 import HybridSearchBar from "./HybridSearch";

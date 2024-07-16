@@ -30,7 +30,7 @@ export default function AdvancedSearchResultsPage() {
   const encodedCategory = encodeURIComponent(category || "");
 
   const { data, error, isLoading } = useSWR(
-    `/api/advance_search?query=${encodedQuery}&category=${encodedCategory}`,
+    `/api/advance_search?query=${encodedQuery}&category=${encodedCategory}&type=vector`,
     fetchMovies
   );
 
@@ -54,6 +54,7 @@ export default function AdvancedSearchResultsPage() {
           pathname: "document_page",
           query: {
             id: document.document_id,
+            chunk: document.chunk
           },
         }}
       >

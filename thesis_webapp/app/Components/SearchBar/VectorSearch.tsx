@@ -57,9 +57,7 @@ export default function VectorSearchBar() {
     const encodedQuery = encodeURI(advQuery.query || "");
     const encodedCategory = encodeURI(advQuery.category.join(",") || "");
 
-    router.push(
-      `/advance_search?query=${encodedQuery}` + `&category=${encodedCategory}`
-    );
+    router.push(`/advance_search?query=${encodedQuery}&category=${encodedCategory}&type=vector`);
   }
 
   function onClear() {

@@ -7,6 +7,7 @@ import { useExtractedText } from "../Contexts/ExtractedTextContext";
 type AdvQuery = {
   query: string;
   category: string[];
+  initial: boolean;
 };
 
 export default function HybridSearchBar() {
@@ -14,6 +15,7 @@ export default function HybridSearchBar() {
   const [advQuery, setAdvQuery] = useState<AdvQuery>({
     query: "",
     category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"], // Default to all categories
+    initial: true
   });
   const router = useRouter();
 
@@ -54,21 +56,45 @@ export default function HybridSearchBar() {
     });
   }
 
-  function onSearch(event: React.FormEvent) {
-    event.preventDefault();
-    const encodedQuery = encodeURI(advQuery.query || "");
-    const encodedCategory = encodeURI(advQuery.category.join(",") || "");
+  // function onSearch(event: React.FormEvent) {
+  //   event.preventDefault();
+  //   const encodedQuery = encodeURI(advQuery.query || "");
+  //   const encodedCategory = encodeURI(advQuery.category.join(",") || "");
 
-    router.push(
-      `/hybrid_search?query=${encodedQuery}` +
-        `&category=${encodedCategory}&type=hybrid`
-    );
+  //   router.push(
+  //     `/hybrid_search?query=${encodedQuery}` +
+  //       `&category=${encodedCategory}&type=hybrid`
+  //   );
+  // }
+
+  // SESSION STORAGE -----------------------
+  async function onSearch(event: React.FormEvent) {
+    event.preventDefault();
+
+    // Clear the session storage before storing new data
+    sessionStorage.clear();
+
+    const response = await fetch('/api/hybrid_search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(advQuery),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const searchKey = `search-${Date.now()}`;
+      sessionStorage.setItem(searchKey, JSON.stringify(data));
+      router.push(`/hybrid_search?key=${searchKey}&type=hybrid`);
+    } else {
+      console.error('Failed to search documents');
+    }
   }
 
   function onClear() {
     setAdvQuery({
       query: "",
       category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"],
+      initial: true
     });
   }
 
@@ -96,7 +122,7 @@ export default function HybridSearchBar() {
             <textarea
               name="query"
               className="block w-full h-24 p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2"
-              placeholder="Search here...HYBRIDD"
+              placeholder="Hybrid Search here..."
               value={advQuery.query}
               onChange={handleChange}
             />

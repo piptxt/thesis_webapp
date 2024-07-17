@@ -7,6 +7,7 @@ import { useExtractedText } from "../Contexts/ExtractedTextContext";
 type AdvQuery = {
   query: string;
   category: string[];
+  initial: boolean;
 };
 
 export default function VectorSearchBar() {
@@ -14,6 +15,7 @@ export default function VectorSearchBar() {
   const [advQuery, setAdvQuery] = useState<AdvQuery>({
     query: "",
     category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"], // Default to all categories
+    initial: true
   });
   const router = useRouter();
 
@@ -55,20 +57,64 @@ export default function VectorSearchBar() {
     });
   }
 
-  function onSearch(event: React.FormEvent) {
-    event.preventDefault();
-    const encodedQuery = encodeURI(advQuery.query || "");
-    const encodedCategory = encodeURI(advQuery.category.join(",") || "");
+  // function onSearch(event: React.FormEvent) {
+  //   event.preventDefault();
+  //   const encodedQuery = encodeURI(advQuery.query || "");
+  //   const encodedCategory = encodeURI(advQuery.category.join(",") || "");
 
-    router.push(
-      `/advance_search?query=${encodedQuery}&category=${encodedCategory}&type=vector`
-    );
+  //   router.push(
+  //     `/advance_search?query=${encodedQuery}&category=${encodedCategory}&type=vector`
+  //   );
+  // }
+
+  // LOCAL STORAGE ------------------------
+  // async function onSearch(event: React.FormEvent) {
+  //   event.preventDefault();
+  //   const response = await fetch('/api/advance_search', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify(advQuery),
+  //   });
+
+  //   if (response.ok) {
+  //     const data = await response.json();
+  //     const searchKey = `search-${Date.now()}`;
+  //     const compressedData = LZString.compressToUTF16(JSON.stringify(data));
+  //     localStorage.setItem(searchKey, compressedData);
+  //     router.push(`/advance_search?key=${searchKey}`);
+  //   } else {
+  //     console.error('Failed to search documents');
+  //   }
+  // }
+
+  // SESSION STORAGE -----------------------
+  async function onSearch(event: React.FormEvent) {
+    event.preventDefault();
+
+    // Clear the session storage before storing new data
+    sessionStorage.clear();
+
+    const response = await fetch('/api/advance_search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(advQuery),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const searchKey = `search-${Date.now()}`;
+      sessionStorage.setItem(searchKey, JSON.stringify(data));
+      router.push(`/advance_search?key=${searchKey}&type=vector`);
+    } else {
+      console.error('Failed to search documents');
+    }
   }
 
   function onClear() {
     setAdvQuery({
       query: "",
       category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"],
+      initial: true
     });
   }
 
@@ -96,7 +142,7 @@ export default function VectorSearchBar() {
             <textarea
               name="query"
               className="block w-full h-24 p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2"
-              placeholder="Search here...VECTORR"
+              placeholder="Vector Search here..."
               value={advQuery.query}
               onChange={handleChange}
             />

@@ -24,6 +24,14 @@ text_splitter = RecursiveCharacterTextSplitter(
     length_function=len
 )
 
+# Text splitter
+smaller_text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=4000,
+    chunk_overlap=50,
+    separators=["\n\n", "\n", "(?<=\\. )", " "],
+    length_function=len
+)
+
 def generate_embedding(text):
     return model.encode(text).tolist()
 
@@ -187,6 +195,8 @@ def vector_results():
     data = request.json
     text = data.get("text", "")
     category = data.get("category", [])
+    print(text)
+    print(category)
 
     # Split the category string into a list if it's a string
     if isinstance(category, str):
@@ -248,6 +258,7 @@ def vector_results():
 
 @app.route('/hybrid_results', methods=['POST'])
 def hybrid_results():
+
     data = request.json
     text = data.get("text", "")
     category = data.get("category", [])
@@ -270,6 +281,20 @@ def hybrid_results():
         all_results.extend(results)
     
     return jsonify(convert_objectid_to_str(all_results))
+
+@app.route('/split_to_chunks', methods=['POST'])
+def split_to_chunks():
+    data = request.json
+    text = data.get("text", "")
+    chunks = split_chunks(text)
+    return jsonify(chunks)
+
+@app.route('/split_to_smaller_chunks', methods=['POST'])
+def split_to_smaller_chunks():
+    data = request.json
+    text = data.get("text", "")
+    chunks = smaller_text_splitter.split_text(text)
+    return jsonify(chunks)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

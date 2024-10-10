@@ -16,17 +16,18 @@ export default async function DocumentPage({ searchParams }) {
     document = await db
       .collection("Documents")
       .findOne({ _id: new ObjectId(searchParams.id) });
+    console.log(document);
 
-    const docu = await db
-      .collection("Flattened")
-      .find({ document_id: new ObjectId(searchParams.id) })
-      .toArray();
-    chunks = docu.map((item) => item.chunk);
+    // const docu = await db
+    //   .collection("Document")
+    //   .find({ document_id: new ObjectId(searchParams.id) })
+    //   .toArray();
+    // chunks = docu.map((item) => item.chunk);
 
-    const highlighted_chunk = await db
-      .collection("Flattened")
-      .findOne({ _id: new ObjectId(searchParams.chunk) });
-    highlighted_text = highlighted_chunk ? highlighted_chunk.chunk : "";
+    // const highlighted_chunk = await db
+    //   .collection("Flattened")
+    //   .findOne({ _id: new ObjectId(searchParams.chunk) });
+    // highlighted_text = highlighted_chunk ? highlighted_chunk.chunk : "";
 
     // if (document) {
     //   console.log("Document found:", document);
@@ -43,24 +44,15 @@ export default async function DocumentPage({ searchParams }) {
       <SearchBars />
 
       <main className="mx-auto my-15 p-5 w-3/4 border rounded-lg">
-        <h2 className="text-4xl mt-1 font-semibold text-sky-700 text-center">
+        <h2 className="text-4xl mt-1 mb-5 font-semibold text-sky-700 text-center">
           {document ? document.title : "Loading..."}
         </h2>
 
-        {chunks
-          ? chunks.map((chunk, i) => (
-              <p
-                key={i}
-                className={`text-sm mt-4 indent-4 leading-loose ${
-                  chunk === highlighted_text
-                    ? "bg-yellow-200" // Apply yellow background if chunk matches highlighted_text
-                    : ""
-                }`}
-              >
-                {chunk}
-              </p>
-            ))
-          : "Loading..."}
+        {document ? (
+          <p className="text-base leading-loose text-gray-800 font-serif border-l-4 border-gray-600 pl-4">
+            {document.text}
+          </p>
+        ) : null}
       </main>
     </>
   );

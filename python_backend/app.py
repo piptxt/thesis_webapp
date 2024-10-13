@@ -112,7 +112,8 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
                 "title": 1,
                 "category": 1,
                 "text": 1,
-                "document_id": {"$toString": "$document_id"},
+                "summary": 1,
+                # "document_id": {"$toString": "$document_id"},
                 "score": {"$meta": "vectorSearchScore"},
             }
         }
@@ -153,6 +154,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
                 "title": 1,
                 "category": 1,
                 "text": 1,
+                "summary": 1,
                 # "document_id": {"$toString": "$document_id"},
                 "score": {"$meta": "searchScore"},
             }
@@ -178,7 +180,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
     # Enforce that retrieved docs are the same form for each list in retriever_docs
     for i in range(len(doc_lists)):
         doc_lists[i] = [
-            {"_id": doc["_id"], "title": doc["title"], "category": doc["category"], "text": doc["text"], "document_id": doc["document_id"], "score": doc["score"]}
+            {"_id": doc["_id"], "title": doc["title"],"summary": doc["summary"], "score": doc["score"]}
             for doc in doc_lists[i]
         ]
 
@@ -186,7 +188,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
     fused_documents = weighted_reciprocal_rank(doc_lists)
     print("Fused Docs Results:")
     for doc in fused_documents:
-        print(f'Title: {doc["title"]}, Document ID: {doc["document_id"]}, Score: {doc["rrf_score"]}')
+        print(f'Title: {doc["title"]}, Score: {doc["rrf_score"]}')
     print("--------------------------------------------------------")
     return fused_documents
 
@@ -267,7 +269,8 @@ def vector_results():
                 "title": 1,
                 "category": 1,
                 "text": 1,
-                "document_id":  {"$toString": "$document_id"},
+                "summary": 1,
+                # "document_id":  {"$toString": "$document_id"},
                 "score": {"$meta": "vectorSearchScore"},
             }
         }
@@ -313,6 +316,7 @@ def hybrid_results():
     #     all_results.extend(results)
 
     results = atlas_hybrid_search(text, category, top_k=100, vector_index_name="vectorsearch_index", keyword_index_name="default")
+    print(results[0])
     
     return jsonify(convert_objectid_to_str(results))
 

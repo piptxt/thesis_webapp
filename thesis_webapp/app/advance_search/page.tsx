@@ -29,7 +29,9 @@ export default function AdvancedSearchResultsPage() {
       const storedData = sessionStorage.getItem(key);
       if (storedData) {
         setData(JSON.parse(storedData));
+        setDocumentLoading(false);
 
+        // ------ FOR CHUNKS ---------
         // if (data.initial === true) {
         //   setSelectedChunkIndex(0);
         // }
@@ -37,6 +39,7 @@ export default function AdvancedSearchResultsPage() {
         // ------ FOR CHUNKS ---------
         // setData({ documents: [], query_chunks: [], category: [], initial: false });
         setData({ documents: [], category: [], initial: false });
+        setDocumentLoading(true);
       }
     }
   }, [key]);
@@ -119,8 +122,8 @@ export default function AdvancedSearchResultsPage() {
           <h2 className="text-base mt-1 font-sm text-gray-600">
             Relevancy Score: {document.score}
           </h2>
-          <p className="text-sm mt-4 line-clamp-2 text-gray-600">
-            {document.text}
+          <p className="text-sm mt-4 line-clamp-5 text-gray-600">
+            {document.summary}
           </p>
         </li>
       </Link>

@@ -44,6 +44,7 @@ export default function HybridSearchBar() {
     });
   }
 
+  // Handles the Categories Filter
   function handleCheckboxChange(e: any) {
     e.preventDefault();
     const value = e.target.value;
@@ -74,15 +75,20 @@ export default function HybridSearchBar() {
     // Clear the session storage before storing new data
     sessionStorage.clear();
 
+    // Fetch data from API
     const response = await fetch('/api/hybrid_search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(advQuery),
     });
 
+    // Route to Page with Hybrid Search Results
     if (response.ok) {
       const data = await response.json();
       const searchKey = `search-${Date.now()}`;
+
+      sessionStorage.clear();
+      
       sessionStorage.setItem(searchKey, JSON.stringify(data));
       router.push(`/hybrid_search?key=${searchKey}&type=hybrid`);
     } else {
@@ -90,6 +96,7 @@ export default function HybridSearchBar() {
     }
   }
 
+    // Function for Clear Button (search bar)
   function onClear() {
     setAdvQuery({
       query: "",
@@ -98,6 +105,7 @@ export default function HybridSearchBar() {
     });
   }
 
+  // Return statement for HTML of Vector Search Page
   return (
     <div className="mx-auto p-5">
       <form

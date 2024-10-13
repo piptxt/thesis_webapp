@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 
+// This file is for the routing of Hybrid Search
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method !== 'POST') {
@@ -15,20 +17,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     let response;
-    let response_query;
 
-    if (initial === true) {
-      response_query = await axios.post("http://localhost:5000/split_to_smaller_chunks", { text: query });
-      response = await axios.post("http://localhost:5000/hybrid_results", { text: response_query.data[0], category });
-    } else {
-      response = await axios.post("http://localhost:5000/hybrid_results", { text: query, category });
-      response_query = await axios.post("http://localhost:5000/split_to_smaller_chunks", { text: query });
-    }
+    // FOR CHUNKS ---------------
+    // let response_query;
 
-    if (response && response_query) {
+    // if (initial === true) {
+    //   response_query = await axios.post("http://localhost:5000/split_to_smaller_chunks", { text: query });
+    //   response = await axios.post("http://localhost:5000/hybrid_results", { text: response_query.data[0], category });
+    // } else {
+    //   response = await axios.post("http://localhost:5000/hybrid_results", { text: query, category });
+    //   response_query = await axios.post("http://localhost:5000/split_to_smaller_chunks", { text: query });
+    // }
+
+    response = await axios.post("http://localhost:5000/hybrid_results", { text: query, category });
+
+    // FOR CHUNKS ---------------
+    // if (response && response_query) {
+    //   const documents = response.data;
+    //   const query_chunks = response_query.data;
+    //   res.status(200).json({ documents, query_chunks, category });
+    // }
+
+    if (response) {
       const documents = response.data;
-      const query_chunks = response_query.data;
-      res.status(200).json({ documents, query_chunks, category });
+      res.status(200).json({ documents, category });
     }
   } catch (error) {
     console.error(error);

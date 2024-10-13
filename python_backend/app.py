@@ -8,9 +8,9 @@ from bson import ObjectId
 app = Flask(__name__)
 
 # MongoDB Connection
-client = pymongo.MongoClient("mongodb+srv://pipo:snvQQfMSbJwDchjN@cluster0.yzkq3xh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",tlsCAFile=certifi.where())
+client = pymongo.MongoClient("mongodb+srv://pipo:melgeoffrey@cluster0.yzkq3xh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",tlsCAFile=certifi.where())
 db = client.Thesis
-collection = db["Flattened"]
+collection = db["Documents"]
 
 # Load the SentenceTransformer model
 # model = SentenceTransformer("Alibaba-NLP/gte-large-en-v1.5", device='cuda', trust_remote_code=True)
@@ -95,7 +95,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
         {
             "$vectorSearch": {
                 "queryVector": query_vector,
-                "path": "chunk_embedding",
+                "path": "embed",
                 "numCandidates": 10000,
                 "limit": top_k,
                 "index": vector_index_name
@@ -111,14 +111,15 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
                 "_id": 1,
                 "title": 1,
                 "category": 1,
-                "chunk": 1,
-                "document_id": {"$toString": "$document_id"},
+                "text": 1,
+                "summary": 1,
+                # "document_id": {"$toString": "$document_id"},
                 "score": {"$meta": "vectorSearchScore"},
             }
         }
     ])
     vector_results = list(vector_results)
-    # TRIAL ----------------------
+    # PRINTING VECTOR RESULTS ----------------------
     print("Vector Results:")
     print(len(vector_results))
     for doc in vector_results:
@@ -132,7 +133,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
                 "index": keyword_index_name,
                 "text": {
                     "query": query,
-                    "path": "chunk"
+                    "path": "text"
                 }
             }
         },
@@ -152,15 +153,17 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
                 "_id": 1,
                 "title": 1,
                 "category": 1,
-                "chunk": 1,
-                "document_id": {"$toString": "$document_id"},
+                "text": 1,
+                "summary": 1,
+                # "document_id": {"$toString": "$document_id"},
                 "score": {"$meta": "searchScore"},
             }
         }
     ])
     keyword_results = list(keyword_results)
-    # TRIAL ----------------------
+    # PRINTING KEYWORD RESULTS ----------------------
     print("Keyword Results:")
+    print(len(keyword_results))
     for doc in keyword_results:
         print(f'Title: {doc["title"]}, Score: {doc["score"]}')
     print("--------------------------------------------------------")
@@ -177,7 +180,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
     # Enforce that retrieved docs are the same form for each list in retriever_docs
     for i in range(len(doc_lists)):
         doc_lists[i] = [
-            {"_id": doc["_id"], "title": doc["title"], "category": doc["category"], "chunk": doc["chunk"], "document_id": doc["document_id"], "score": doc["score"]}
+            {"_id": doc["_id"], "title": doc["title"],"summary": doc["summary"], "score": doc["score"]}
             for doc in doc_lists[i]
         ]
 
@@ -185,7 +188,7 @@ def atlas_hybrid_search(query, category, top_k, vector_index_name, keyword_index
     fused_documents = weighted_reciprocal_rank(doc_lists)
     print("Fused Docs Results:")
     for doc in fused_documents:
-        print(f'Title: {doc["title"]}, Document ID: {doc["document_id"]}, Score: {doc["rrf_score"]}')
+        print(f'Title: {doc["title"]}, Score: {doc["rrf_score"]}')
     print("--------------------------------------------------------")
     return fused_documents
 
@@ -204,57 +207,88 @@ def vector_results():
 
     # Determine if the query is a string, paragraph, or document
     if isinstance(text, str):
-        chunks = split_chunks(text)
+        # chunks = split_chunks(text)
+        text=text
     else:
         # If the query is a document, read and chunk the document text
         with open(text, 'r') as file:
             text = file.read()
-            chunks = split_chunks(text)
+            # chunks = split_chunks(text)
     
-    all_results = []
+    # all_results = []
 
-    for chunk in chunks:
-        results = collection.aggregate([
-            {
-                "$vectorSearch": {
-                    "queryVector": generate_embedding(chunk),
-                    "path": "chunk_embedding",
-                    "numCandidates": 10000,
-                    "limit": 100,
-                    "index": "vectorsearch_index",
-                    "includeMetadata": True
-                }
-            },
-            {
-                "$match": {
-                    "category": {"$in": category}
-                }
-            },
-            {
-                "$project": {
-                    "_id": 1,
-                    "title": 1,
-                    "category": 1,
-                    "chunk": 1,
-                    "document_id":  {"$toString": "$document_id"},
-                    "score": {"$meta": "vectorSearchScore"},
-                }
+    # for chunk in chunks:
+    #     results = collection.aggregate([
+    #         {
+    #             "$vectorSearch": {
+    #                 "queryVector": generate_embedding(chunk),
+    #                 "path": "embed",
+    #                 "numCandidates": 10000,
+    #                 "limit": 100,
+    #                 "index": "vectorsearch_index",
+    #                 "includeMetadata": True
+    #             }
+    #         }, 
+    #         {
+    #             "$match": {
+    #                 "category": {"$in": category}
+    #             }
+    #         },
+    #         {
+    #             "$project": {
+    #                 "_id": 1,
+    #                 "title": 1,
+    #                 "category": 1,
+    #                 "text": 1,
+    #                 "document_id":  {"$toString": "$document_id"},
+    #                 "score": {"$meta": "vectorSearchScore"},
+    #             }
+    #         }
+    #     ])
+
+    
+    results = collection.aggregate([
+        {
+            "$vectorSearch": {
+                "queryVector": generate_embedding(text),
+                "path": "embed",
+                "numCandidates": 10000,
+                "limit": 100,
+                "index": "vectorsearch_index",
+                "includeMetadata": True
             }
-        ])
+        },
+        {
+            "$match": {
+                "category": {"$in": category}
+            }
+        },
+        {
+            "$project": {
+                "_id": 1,
+                "title": 1,
+                "category": 1,
+                "text": 1,
+                "summary": 1,
+                # "document_id":  {"$toString": "$document_id"},
+                "score": {"$meta": "vectorSearchScore"},
+            }
+        }
+    ])
 
-        results = list(results)
-        results = convert_objectid_to_str(results)
+    results = list(results)
+    results = convert_objectid_to_str(results)
 
-        for result in results:
-            # result["query_chunk"] = chunk
-            all_results.append(result)
+    # for result in results:
+    #     # result["query_chunk"] = chunk
+    #     all_results.append(result)
 
     # Aggregate results based on score (optional)
     # Here, we simply return all results, but you can add logic to combine scores if needed
 
     # print(all_results)
     print(category)
-    return jsonify(all_results)
+    return jsonify(results)
 
 @app.route('/hybrid_results', methods=['POST'])
 def hybrid_results():
@@ -268,20 +302,26 @@ def hybrid_results():
         category = category.split(',')
 
     if isinstance(text, str):
-        chunks = split_chunks(text)
+        # chunks = split_chunks(text)
+        text = text
     else:
         with open(text, 'r') as file:
             text = file.read()
-            chunks = split_chunks(text)
+            # chunks = split_chunks(text)
     
-    all_results = []
+    # all_results = []
 
-    for chunk in chunks:
-        results = atlas_hybrid_search(chunk, category, top_k=100, vector_index_name="vectorsearch_index", keyword_index_name="keyword_index")
-        all_results.extend(results)
+    # for chunk in chunks:
+    #     results = atlas_hybrid_search(chunk, category, top_k=100, vector_index_name="vectorsearch_index", keyword_index_name="keyword_index")
+    #     all_results.extend(results)
+
+    results = atlas_hybrid_search(text, category, top_k=100, vector_index_name="vectorsearch_index", keyword_index_name="default")
+    print(results[0])
     
-    return jsonify(convert_objectid_to_str(all_results))
+    return jsonify(convert_objectid_to_str(results))
 
+
+# FOR CHUNKS ---------------------
 @app.route('/split_to_chunks', methods=['POST'])
 def split_to_chunks():
     data = request.json
@@ -289,6 +329,7 @@ def split_to_chunks():
     chunks = split_chunks(text)
     return jsonify(chunks)
 
+# FOR CHUNKS ---------------------
 @app.route('/split_to_smaller_chunks', methods=['POST'])
 def split_to_smaller_chunks():
     data = request.json

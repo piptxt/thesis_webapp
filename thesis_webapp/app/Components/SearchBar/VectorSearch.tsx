@@ -1,4 +1,6 @@
-"use client";
+"use client"; 
+
+// This file is to display the Search Page of Vector Search
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -45,6 +47,7 @@ export default function VectorSearchBar() {
     });
   }
 
+  // Handles the Categories Filter
   function handleCheckboxChange(e: any) {
     e.preventDefault();
     const value = e.target.value;
@@ -94,12 +97,14 @@ export default function VectorSearchBar() {
     // Clear the session storage before storing new data
     sessionStorage.clear();
 
+    // Fetch data from API
     const response = await fetch('/api/advance_search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(advQuery),
     });
 
+    // Route to Page with Vector Search Results
     if (response.ok) {
       const data = await response.json();
       const searchKey = `search-${Date.now()}`;
@@ -110,6 +115,7 @@ export default function VectorSearchBar() {
     }
   }
 
+  // Function for Clear Button (search bar)
   function onClear() {
     setAdvQuery({
       query: "",
@@ -118,6 +124,7 @@ export default function VectorSearchBar() {
     });
   }
 
+  // Return statement for HTML of Vector Search Page
   return (
     <div className="mx-auto p-5">
       <form

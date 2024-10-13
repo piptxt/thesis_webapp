@@ -7,18 +7,24 @@ export default async function handler(
 ) {
   try {
     const { basic_search: query, category: category } = req.query;
+    console.log(query);
     if (typeof query !== "string") {
       res.status(400).json({ error: "Invalid query" });
       return;
     }
 
-    if (query === "") {
+    if (query === "" || category == "") {
       const documents: any = [];
       return res.status(200).json({ documents });
     }
 
     let agg: any = [];
-    if (category === "All" || category == "all") {
+    if (
+      category === "All" ||
+      category == "all" ||
+      category?.length === 5 ||
+      category?.length === 0
+    ) {
       agg = [
         {
           $search: {
@@ -81,18 +87,18 @@ export default async function handler(
                 {
                   text: {
                     query: query,
-                    path: "text",
+                    path: "title",
+                    score: {
+                      boost: {
+                        value: 2,
+                      },
+                    },
                   },
                 },
                 {
                   text: {
                     query: query,
                     path: "text",
-                    score: {
-                      boost: {
-                        value: 5,
-                      },
-                    },
                   },
                 },
               ],

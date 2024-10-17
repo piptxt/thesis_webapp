@@ -10,6 +10,10 @@ type AdvQuery = {
   query: string;
   category: string[];
   initial: boolean;
+
+  // TOGGLE SEARCH DISPLAY ---------------
+  showScores: boolean;
+  showSummary: boolean;
 };
 
 export default function VectorSearchBar() {
@@ -17,7 +21,11 @@ export default function VectorSearchBar() {
   const [advQuery, setAdvQuery] = useState<AdvQuery>({
     query: "",
     category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"], // Default to all categories
-    initial: true
+    initial: true,
+
+    // TOGGLE SEARCH DISPLAY ---------------
+    showScores: false,
+    showSummary: true, // default to showing summary
   });
   const router = useRouter();
 
@@ -59,6 +67,13 @@ export default function VectorSearchBar() {
       return { ...prev, category: newCategory };
     });
   }
+
+  // Handles Toggle Search Display Change
+  function handleToggleChange(e: any) {
+    const { name, checked } = e.target;
+    setAdvQuery((prev) => ({ ...prev, [name]: checked }));
+  }
+  
 
   // function onSearch(event: React.FormEvent) {
   //   event.preventDefault();
@@ -109,7 +124,11 @@ export default function VectorSearchBar() {
       const data = await response.json();
       const searchKey = `search-${Date.now()}`;
       sessionStorage.setItem(searchKey, JSON.stringify(data));
-      router.push(`/advance_search?key=${searchKey}&type=vector`);
+      // router.push(`/advance_search?key=${searchKey}&type=vector`);
+
+      // TOGGLE SEARCH DISPLAY ---------------
+      router.push(`/advance_search?key=${searchKey}&type=vector&showScores=${advQuery.showScores}&showSummary=${advQuery.showSummary}`);
+
     } else {
       console.error('Failed to search documents');
     }
@@ -120,7 +139,11 @@ export default function VectorSearchBar() {
     setAdvQuery({
       query: "",
       category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"],
-      initial: true
+      initial: true,
+
+      // TOGGLE SEARCH DISPLAY ---------------
+      showScores: false,
+      showSummary: true
     });
   }
 
@@ -133,6 +156,8 @@ export default function VectorSearchBar() {
       >
         <div className="flex">
           <div className="mb-2 p-4 border border-gray-300 rounded-lg">
+          <h4 className="text-lg font-semibold mb-2">Categories</h4>
+          <hr className="font-semibold mb-3"></hr>
             {categories.map((category) => (
               <label key={category} className="block mb-1">
                 <input
@@ -140,6 +165,7 @@ export default function VectorSearchBar() {
                   value={category}
                   checked={advQuery.category.includes(category)}
                   onChange={handleCheckboxChange}
+                  className="mr-2"
                 />
                 {category}
               </label>
@@ -154,6 +180,33 @@ export default function VectorSearchBar() {
               onChange={handleChange}
             />
           </div>
+
+          {/* Toggle Container SEARCH DISPLAY ------------- */}
+          <div className="mb-2 p-4 border border-gray-300 ml-4 rounded-lg">
+          <h4 className="text-lg font-semibold mb-2">Search Display Options</h4>
+          <hr className="font-semibold mb-3"></hr>
+            <label className="block mb-1">
+              <input
+                type="checkbox"
+                name="showScores"
+                checked={advQuery.showScores}
+                onChange={handleToggleChange}
+                className="mr-2"
+              />
+              Show Search Scores
+            </label>
+            <label className="block mb-1">
+              <input
+                type="checkbox"
+                name="showSummary"
+                checked={advQuery.showSummary}
+                onChange={handleToggleChange}
+                className="mr-2"
+              />
+              Show Summary Field
+            </label>
+          </div>
+
         </div>
         <div className="flex space-x-2">
           <button

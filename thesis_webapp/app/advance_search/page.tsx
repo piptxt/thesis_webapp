@@ -13,6 +13,10 @@ export default function AdvancedSearchResultsPage() {
   const key = search?.get("key") || ""; // Gets the session storage key from the search data (?)
   const router = useRouter();
 
+  // TOGGLE SEARCH DISPLAY ---------------
+  const showScores = search?.get("showScores") === 'true';
+  const showSummary = search?.get("showSummary") === 'true';
+
 // ------ FOR CHUNKS ---------
   // const [data, setData] = useState({ documents: [], query_chunks: [], category: [], initial: true });
   const [data, setData] = useState({ documents: [], category: [], initial: true });
@@ -119,12 +123,12 @@ export default function AdvancedSearchResultsPage() {
             {document.title}
           </h2>
           <h2 className="text-sm text-gray-600">{document.category}</h2>
-          <h2 className="text-base mt-1 font-sm text-gray-600">
+          {showScores && <h2 className="text-base mt-1 font-sm text-gray-600">
             Relevancy Score: {document.score}
-          </h2>
-          <p className="text-sm mt-4 line-clamp-5 text-gray-600">
+          </h2> }
+          {showSummary && <p className="text-sm mt-4 line-clamp-5 text-gray-600">
             {document.summary}
-          </p>
+          </p>}
         </li>
       </Link>
     ));

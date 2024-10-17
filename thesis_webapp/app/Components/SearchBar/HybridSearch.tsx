@@ -8,6 +8,10 @@ type AdvQuery = {
   query: string;
   category: string[];
   initial: boolean;
+
+  // TOGGLE SEARCH DISPLAY ---------------
+  showScores: boolean;
+  showSummary: boolean;
 };
 
 export default function HybridSearchBar() {
@@ -15,7 +19,11 @@ export default function HybridSearchBar() {
   const [advQuery, setAdvQuery] = useState<AdvQuery>({
     query: "",
     category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"], // Default to all categories
-    initial: true
+    initial: true,
+
+    // TOGGLE SEARCH DISPLAY ---------------
+    showScores: false,
+    showSummary: true, // default to showing summary
   });
   const router = useRouter();
 
@@ -57,6 +65,12 @@ export default function HybridSearchBar() {
     });
   }
 
+    // Handles Toggle Search Display Change
+    function handleToggleChange(e: any) {
+      const { name, checked } = e.target;
+      setAdvQuery((prev) => ({ ...prev, [name]: checked }));
+    }
+
   // function onSearch(event: React.FormEvent) {
   //   event.preventDefault();
   //   const encodedQuery = encodeURI(advQuery.query || "");
@@ -90,7 +104,7 @@ export default function HybridSearchBar() {
       sessionStorage.clear();
       
       sessionStorage.setItem(searchKey, JSON.stringify(data));
-      router.push(`/hybrid_search?key=${searchKey}&type=hybrid`);
+      router.push(`/hybrid_search?key=${searchKey}&type=hybrid&showScores=${advQuery.showScores}&showSummary=${advQuery.showSummary}`);
     } else {
       console.error('Failed to search documents');
     }
@@ -101,7 +115,11 @@ export default function HybridSearchBar() {
     setAdvQuery({
       query: "",
       category: ["Act", "Supreme", "Republic Acts", "Commonwealth", "Batas"],
-      initial: true
+      initial: true,
+
+      // TOGGLE SEARCH DISPLAY ---------------
+      showScores: false,
+      showSummary: true
     });
   }
 
@@ -114,6 +132,8 @@ export default function HybridSearchBar() {
       >
         <div className="flex">
           <div className="mb-2 p-4 border border-gray-300 rounded-lg">
+          <h4 className="text-lg font-semibold mb-2">Categories</h4>
+          <hr className="font-semibold mb-3"></hr>
             {categories.map((category) => (
               <label key={category} className="block mb-1">
                 <input
@@ -121,6 +141,7 @@ export default function HybridSearchBar() {
                   value={category}
                   checked={advQuery.category.includes(category)}
                   onChange={handleCheckboxChange}
+                  className="mr-2"
                 />
                 {category}
               </label>
@@ -135,6 +156,33 @@ export default function HybridSearchBar() {
               onChange={handleChange}
             />
           </div>
+
+          {/* Toggle Container SEARCH DISPLAY ------------- */}
+          <div className="mb-2 p-4 border border-gray-300 ml-4 rounded-lg">
+          <h4 className="text-lg font-semibold mb-2">Search Display Options</h4>
+          <hr className="font-semibold mb-3"></hr>
+            <label className="block mb-1">
+              <input
+                type="checkbox"
+                name="showScores"
+                checked={advQuery.showScores}
+                onChange={handleToggleChange}
+                className="mr-2"
+              />
+              Show Search Scores
+            </label>
+            <label className="block mb-1">
+              <input
+                type="checkbox"
+                name="showSummary"
+                checked={advQuery.showSummary}
+                onChange={handleToggleChange}
+                className="mr-2"
+              />
+              Show Summary Field
+            </label>
+          </div>
+
         </div>
         <div className="flex space-x-2">
           <button

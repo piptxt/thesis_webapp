@@ -20,6 +20,7 @@ export default function SearchPage() {
   const search = useSearchParams();
   const searchQuery = search ? search.get("basic_search") : null;
   const searchCategory = search ? search.get("category") : null;
+  const showScores = search ? search.get("showScores") === "true" : false; // Read showScores from query
 
   const encodedSearchQuery = encodeURIComponent(searchQuery || "");
   const encodedCategory = encodeURI(searchCategory || "");
@@ -40,7 +41,6 @@ export default function SearchPage() {
     // Safeguard against undefined data
     DocumentList = <p className="m-5">No Documents found.</p>;
   } else {
-    console.log(data.documents);
     DocumentList = data.documents.map((document: any) => (
       <Link
         key={document._id}
@@ -56,9 +56,12 @@ export default function SearchPage() {
             {document.title}
           </h2>
           <h2 className="text-sm text-gray-600">{document.category}</h2>
-          <h2 className="text-base mt-1 font-sm text-gray-600">
-            Relevancy Score: {document.scoreDetails.value}
-          </h2>
+          {/* Conditionally show the relevancy score */}
+          {showScores && (
+            <h2 className="text-base mt-1 font-sm text-gray-600">
+              Relevancy Score: {document.scoreDetails.value}
+            </h2>
+          )}
           <p className="text-sm mt-4 line-clamp-2 text-gray-600">
             {document.text}
           </p>

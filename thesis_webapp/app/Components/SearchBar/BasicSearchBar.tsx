@@ -8,8 +8,7 @@ export default function SearchBar() {
   const { extractedText } = useExtractedText();
   const search = useSearchParams();
   const [query, setQuery] = useState(search ? search.get("q") : "");
-
-  // Initialize selectedCategories with all categories checked by default
+  const [showScores, setShowScores] = useState(false); // Add state for Show Scores
   const categories = [
     "Act",
     "Supreme",
@@ -43,62 +42,84 @@ export default function SearchBar() {
       .map((cat) => encodeURIComponent(cat))
       .join(",");
 
+    // Include the showScores state in the query parameters
     router.push(
-      `/search?basic_search=${encodedSearchQuery}&category=${encodedCategories}`
+      `/search?basic_search=${encodedSearchQuery}&category=${encodedCategories}&showScores=${showScores}`
     );
   }
 
   function onClear() {
     setQuery("");
     setSelectedCategories(categories); // Reset to all checked by default
+    setShowScores(false); // Reset the showScores state
     router.push(`/search`);
   }
 
   return (
-    <div className="mx-auto my-2">
-      <form className="max-w-6xl mx-auto" onSubmit={onSearch}>
-        <div className="relative flex items-start space-x-4">
-          {/* Checkbox list for categories */}
-          <div className="flex flex-col space-y-2 p-4 border border-gray-300 rounded-lg">
+    <div className="mx-auto p-5">
+      <form
+        className="max-w-5xl min-h-2 mx-auto text-start"
+        onSubmit={onSearch}
+      >
+        <div className="flex">
+          <div className="mb-2 p-4 border border-gray-300 rounded-lg">
+            <h4 className="text-lg font-semibold mb-2">Categories</h4>
+            <hr className="font-semibold mb-3"></hr>
             {categories.map((category) => (
-              <div key={category} className="flex items-center">
+              <label key={category} className="block mb-1">
                 <input
                   type="checkbox"
-                  id={category}
+                  value={category}
                   checked={selectedCategories.includes(category)}
                   onChange={() => toggleCategory(category)}
                   className="mr-2"
                 />
-                <label htmlFor={category}>{category}</label>
-              </div>
+                {category}
+              </label>
             ))}
           </div>
-
-          {/* Search input */}
-          <textarea
-            id="default-search"
-            className="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Search here..."
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-
-          {/* Buttons */}
-          <div className="flex space-x-2">
-            <button
-              type="button"
-              className="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2"
-              onClick={onClear}
-            >
-              Clear
-            </button>
-            <button
-              type="submit"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
-            >
-              Search
-            </button>
+          <div className="mb-2 flex-grow">
+            <textarea
+              name="query"
+              className="block w-full h-24 p-4 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 ml-2"
+              placeholder="Hybrid Search here..."
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
           </div>
+
+          {/* Toggle Container SEARCH DISPLAY ------------- */}
+          <div className="mb-2 p-4 border border-gray-300 ml-4 rounded-lg">
+            <h4 className="text-lg font-semibold mb-2">
+              Search Display Options
+            </h4>
+            <hr className="font-semibold mb-3"></hr>
+            <label className="block mb-1">
+              <input
+                type="checkbox"
+                name="showScores"
+                checked={showScores}
+                onChange={() => setShowScores(!showScores)} // Update state on toggle
+                className="mr-2"
+              />
+              Show Search Scores
+            </label>
+          </div>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            type="button"
+            className="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2"
+            onClick={onClear}
+          >
+            Clear
+          </button>
+          <button
+            type="submit"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Search
+          </button>
         </div>
       </form>
     </div>

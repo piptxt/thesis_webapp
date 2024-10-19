@@ -41,12 +41,16 @@ export default function AdvancedSearchResultsPage() {
   const router = useRouter();
 
   // TOGGLE SEARCH DISPLAY ---------------
-  const showScores = search?.get("showScores") === 'true';
-  const showSummary = search?.get("showSummary") === 'true';
+  const showScores = search?.get("showScores") === "true";
+  const showSummary = search?.get("showSummary") === "true";
 
   // ------ FOR CHUNKS ---------
   // const [data, setData] = useState({ documents: [], query_chunks: [], category: [], initial: true });
-  const [data, setData] = useState({ documents: [], category: [], initial: true });
+  const [data, setData] = useState({
+    documents: [],
+    category: [],
+    initial: true,
+  });
 
   const [documentLoading, setDocumentLoading] = useState(false); // Separate loading state for documents
 
@@ -54,7 +58,6 @@ export default function AdvancedSearchResultsPage() {
   // const [chunkLoading, setChunkLoading] = useState(false); // Separate loading state for chunks
   // const [expandedChunks, setExpandedChunks] = useState<{ [key: number]: boolean }>({}); // Track expanded state for chunks
   // const [selectedChunkIndex, setSelectedChunkIndex] = useState<number | null>(null); // Track selected chunk index
-
 
   useEffect(() => {
     if (key) {
@@ -138,7 +141,7 @@ export default function AdvancedSearchResultsPage() {
         href={{
           pathname: "document_page",
           query: {
-            id: document.document_id,
+            id: document._id,
             // chunk: document._id,
           },
         }}
@@ -148,15 +151,21 @@ export default function AdvancedSearchResultsPage() {
             {document.title}
           </h2>
           <h2 className="text-sm text-gray-600">{document.category}</h2>
-          {showScores && <h2 className="text-base mt-1 font-sm text-gray-600">
-            Relevancy Score: {document.score}
-          </h2>}
-          {showScores && <h2 className="text-base mt-0 font-sm text-gray-600">
-            Reciprocal Rank Score: {document.rrf_score}
-          </h2>}
-          {showSummary && <p className="text-sm mt-4 line-clamp-5 text-gray-600">
-            {document.summary}
-          </p>}
+          {showScores && (
+            <h2 className="text-base mt-1 font-sm text-gray-600">
+              Relevancy Score: {document.score}
+            </h2>
+          )}
+          {showScores && (
+            <h2 className="text-base mt-0 font-sm text-gray-600">
+              Reciprocal Rank Score: {document.rrf_score}
+            </h2>
+          )}
+          {showSummary && (
+            <p className="text-sm mt-4 line-clamp-5 text-gray-600">
+              {document.summary}
+            </p>
+          )}
         </li>
       </Link>
     ));
@@ -212,9 +221,9 @@ export default function AdvancedSearchResultsPage() {
       <SearchBars />
       {/* <div className="flex m-auto w-2/3"> */}
       <ul className="m-auto w-2/3">
-          <p className="mx-5 text-xl font-semibold">Hybrid Search Results:</p>
-          {DocumentList}
-        </ul>
+        <p className="mx-5 text-xl font-semibold">Hybrid Search Results:</p>
+        {DocumentList}
+      </ul>
       {/* </div> */}
     </>
   );

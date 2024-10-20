@@ -1,38 +1,37 @@
 "use client";
 
-
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { useExtractedText } from '../Contexts/ExtractedTextContext';
-import { ChangeEvent } from 'react';
+import { useExtractedText } from "../Contexts/ExtractedTextContext";
+import { ChangeEvent } from "react";
 
 export default function QBPSearchBar() {
   const { setExtractedText } = useExtractedText();
 
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files ? e.target.files[0] : null;
-    if (file && file.type === 'application/pdf') {
+    if (file && file.type === "application/pdf") {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
       try {
-        const response = await fetch('http://localhost:3001/upload', {
-          method: 'POST',
+        const response = await fetch("api/upload", {
+          method: "POST",
           body: formData,
         });
 
         if (!response.ok) {
-          throw new Error('Failed to upload file');
+          throw new Error("Failed to upload file");
         }
 
         const data = await response.json();
         setExtractedText({
-          title: '', // Customize this if needed
-          category: '', // Customize this if needed
+          title: "", // Customize this if needed
+          category: "", // Customize this if needed
           body: data.text,
         });
       } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
       }
     }
   }

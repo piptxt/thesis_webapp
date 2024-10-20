@@ -2,3 +2,5 @@ flask
 sentence-transformers
 langchain
 pymongo
+numpy
+tensorflow

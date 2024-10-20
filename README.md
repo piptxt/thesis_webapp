@@ -1,4 +1,4 @@
-# Open Law Philippines: Vector Search Embeddings in the Legal Field
+# Open Law Philippines:
 
 This thesis explores the innovations and applications of vector search embeddings in the legal field. It compares the performance of traditional BM25 search, vector embedding search, and a hybrid approach combining both methods. The research is aimed at professionals and learners in the legal field who are interested in understanding the impact of advanced retrieval methods on legal document search and analysis.
 
@@ -35,11 +35,11 @@ Ensure you have the following installed on your machine:
 
 ### Features
 
-#### -Vector Search Embeddings: Advanced search functionality using document embeddings for improved accuracy in legal document retrieval.
-#### -BM25 Search: A traditional term-based search method for comparison.
-#### -Hybrid Search: A combined approach of both BM25 and vector embedding search to balance precision and recall.
-#### -UMAP Visualization: Visualization tool to understand the positioning of document embeddings using TensorFlow's Embedding Projector.
-#### -Generated Summary: Generated Summary as recommended by professional to aid in assessing the search system's results quality.
+* Vector Search Embeddings: Advanced search functionality using document embeddings for improved accuracy in legal document retrieval.
+* BM25 Search: A traditional term-based search method for comparison.
+* Hybrid Search: A combined approach of both BM25 and vector embedding search to balance precision and recall.
+* UMAP Visualization: Visualization tool to understand the positioning of document embeddings using TensorFlow's Embedding Projector.
+* Generated Summary: Generated Summary as recommended by professional to aid in assessing the search system's results quality.
 
 ### Authors
 

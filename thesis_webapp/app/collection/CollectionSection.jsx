@@ -29,7 +29,7 @@ const cards = [
     },
     {
       id: 4,
-      title: "Batas Pambata",
+      title: "Batas Pambansa",
       text: "Explore the collection of Batas Pambansa, laws enacted by the former Batasang Pambansa (National Assembly) of the Philippines. These laws cover various aspects of national interest and social reform enacted during the period of parliamentary government. A valuable resource for understanding the legal transitions and reforms of the past.",
       imgSrc: "/images/collection/batas_pambata.png",
       link: "/"

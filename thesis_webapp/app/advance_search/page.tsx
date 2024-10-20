@@ -12,22 +12,42 @@ export default function AdvancedSearchResultsPage() {
   const search = useSearchParams();
   const key = search?.get("key") || ""; // Gets the session storage key from the search data (?)
   const router = useRouter();
+  const SummaryPopup = ({ document, onClose }: any) => {
+    return (
+      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+        <div className="relative bg-white p-8 rounded-lg max-h-[80vh] w-3/4 overflow-y-auto">
+          {/* Close "X" button */}
+          <button
+            className="absolute top-4 right-4 text-3xl font-bold text-gray-600 hover:text-gray-800"
+            onClick={onClose}
+          >
+            &times;
+          </button>
 
-  // TOGGLE SEARCH DISPLAY ---------------
-  const showScores = search?.get("showScores") === 'true';
-  const showSummary = search?.get("showSummary") === 'true';
-
-// ------ FOR CHUNKS ---------
-  // const [data, setData] = useState({ documents: [], query_chunks: [], category: [], initial: true });
-  const [data, setData] = useState({ documents: [], category: [], initial: true });
-
-  const [documentLoading, setDocumentLoading] = useState(false); // Separate loading state for documents
+          <h2 className="text-xl font-bold mb-4">{document.title}</h2>
+          <p className="text-sm text-gray-600 mb-4">{document.summary}</p>
+          <button
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // ------ FOR CHUNKS ---------
-  // const [chunkLoading, setChunkLoading] = useState(false); // Separate loading state for chunks
-  // const [expandedChunks, setExpandedChunks] = useState<{ [key: number]: boolean }>({}); // Track expanded state for chunks
-  // const [selectedChunkIndex, setSelectedChunkIndex] = useState<number | null>(null); // Track selected chunk index
+  // const [data, setData] = useState({ documents: [], query_chunks: [], category: [], initial: true });
+  const showScores = search?.get("showScores") === "true";
+  const [data, setData] = useState({
+    documents: [],
+    category: [],
+    initial: true,
+  });
 
+  const [documentLoading, setDocumentLoading] = useState(false); // Separate loading state for documents
+  const [selectedDocument, setSelectedDocument] = useState(null); // Keep track of which document is selected for viewing summary
   useEffect(() => {
     if (key) {
       const storedData = sessionStorage.getItem(key);
@@ -48,54 +68,6 @@ export default function AdvancedSearchResultsPage() {
     }
   }, [key]);
 
-  // ------ FOR CHUNKS ---------
-  // const handleContainerClick = async (index: number) => {
-  //   const current_query_chunks = data.query_chunks
-  //   const queryChunk = data.query_chunks[index];
-  //   const newQuery = { query: queryChunk, category: data.category, initial: false }; // Adjust categories as needed
-
-  //   // Set both document and chunk loading states
-  //   setDocumentLoading(true);
-
-  //   // Set selected chunk index
-  //   setSelectedChunkIndex(index);
-
-  //   sessionStorage.clear();
-
-    // ------ FOR CHUNKS ---------
-    // Fetch new search results based on the selected chunk
-    // const response = await fetch('/api/advance_search', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(newQuery),
-    // });
-
-      // ------ FOR CHUNKS (new search for a selected chunk) ---------
-    // if (response.ok) {
-    //   const newData = await response.json();
-    //   const newKey = `search-${Date.now()}`;
-    //   sessionStorage.setItem(newKey, JSON.stringify({ ...newData, query_chunks: current_query_chunks }));
-    //   setDocumentLoading(false); // Reset document loading state
-
-    //   // Update state with new data
-    //   setData({ documents: newData.documents, query_chunks: current_query_chunks, category: newData.category, initial: false }); // <--- This line ensures the documents list is replaced
-
-    //   router.push(`/advance_search?key=${newKey}&type=vector`);
-    // } else {
-    //   setDocumentLoading(false); // Reset document loading state in case of error
-    //   console.error('Failed to search documents');
-    // }
-  // };
-
-  // ------ FOR CHUNKS ---------
-  // const toggleExpandChunk = (index: number) => {
-  //   setExpandedChunks(prevState => ({
-  //     ...prevState,
-  //     [index]: !prevState[index]
-  //   }));
-  // };
-
-  // setDocumentLoading(true);
   let DocumentList;
   // let LeftSideContainers; // FOR CHUNKS
 
@@ -108,91 +80,67 @@ export default function AdvancedSearchResultsPage() {
     DocumentList = <p className="m-5">No Documents found.</p>;
   } else {
     DocumentList = data.documents.map((document: any) => (
-      <Link
-        key={document._id}
-        href={{
-          pathname: "document_page",
-          query: {
-            id: document._id,
-            // chunk: document._id,
-          },
-        }}
-      >
-        <li className="m-5 p-5 border rounded">
-          <h2 className="text-xl mt-1 font-semibold no-underline hover:underline cursor-pointer text-sky-700 ">
+      <li key={document._id} className="m-5 p-5 border rounded">
+        {/* Wrap only the document title with Link */}
+        <Link
+          href={{
+            pathname: "document_page",
+            query: {
+              id: document._id,
+            },
+          }}
+        >
+          <h2 className="text-xl mt-1 font-semibold no-underline hover:underline cursor-pointer text-sky-700">
             {document.title}
           </h2>
-          <h2 className="text-sm text-gray-600">{document.category}</h2>
-          {showScores && <h2 className="text-base mt-1 font-sm text-gray-600">
-            Relevancy Score: {document.score}
-          </h2> }
-          {showSummary && <p className="text-sm mt-4 line-clamp-5 text-gray-600">
-            {document.summary}
-          </p>}
-        </li>
-      </Link>
+        </Link>
+
+        <h2 className="text-sm text-gray-600">{document.category}</h2>
+
+        {/* Display the scores based on the showScores state */}
+        {showScores && (
+          <>
+            <h2 className="text-base mt-1 font-sm text-gray-600">
+              Relevancy Score: {document.score}
+            </h2>
+          </>
+        )}
+
+        <p className="text-sm mt-4 line-clamp-5 text-gray-600">
+          {document.summary}
+        </p>
+
+        {/* Button to show the summary in a popup */}
+        <button
+          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => setSelectedDocument(document)}
+        >
+          View AI-Generated Summary
+        </button>
+      </li>
     ));
   }
 
-  // ---------- CHUNKS DISPLAY -------------
-  // if (chunkLoading) {
-  //   LeftSideContainers = <p className="m-5">Loading chunks...</p>;
-  // } else {
-  //   LeftSideContainers = data.query_chunks.map((chunk: any, index: any) => (
-  //     <div
-  //       key={index}
-  //       className={`border p-4 mb-4 cursor-pointer ${selectedChunkIndex === index ? 'outline outline-2 outline-blue-500 shadow-lg' : ''}`} // Apply outline and shadow classes
-  //       onClick={() => handleContainerClick(index)}
-  //     >
-  //       <h3 className="font-semibold text-lg">Chunk {index + 1}</h3>
-  //       <p>
-  //         {expandedChunks[index] ? chunk : `${chunk.substring(0, 100)}...`} {/* Limit to 100 characters */}
-  //         <button
-  //           className="text-blue-500 ml-2"
-  //           onClick={(e) => {
-  //             e.stopPropagation(); // Prevent triggering the parent click event
-  //             toggleExpandChunk(index);
-  //           }}
-  //         >
-  //           {expandedChunks[index] ? "Show less" : "Show more"}
-  //         </button>
-  //       </p>
-  //     </div>
-  //   ));
-  // }
-
-  // FOR CHUNKS -------------------
-  // Return statement for HTML to display Search Results for Vector Search
-  // return (
-  //   <>
-  //     <NavBar />
-  //     <SearchBars />
-  //     <div className="flex m-auto w-2/3">
-  //       {/* <div className="w-1/4 p-5">
-  //         {LeftSideContainers}
-  //       </div> */}
-  //       <ul className="w-3/4">
-  //         <p className="mx-5 text-xl font-semibold">Vector Search Results:</p>
-  //         {DocumentList}
-  //       </ul>
-  //     </div>
-  //   </>
-  // );
-
-  // Return statement for HTML to display Search Results for Vector Search
   return (
     <>
       <NavBar />
       <SearchBars />
       {/* <div className="flex m-auto w-2/3"> */}
-        {/* <div className="w-1/4 p-5">
+      {/* <div className="w-1/4 p-5">
           {LeftSideContainers}
         </div> */}
-        <ul className="m-auto w-2/3">
-          <p className="mx-5 text-xl font-semibold">Vector Search Results:</p>
-          {DocumentList}
-        </ul>
+      <ul className="m-auto w-2/3">
+        <p className="mx-5 text-xl font-semibold">Vector Search Results:</p>
+        {DocumentList}
+      </ul>
       {/* </div> */}
+      {/* Render the summary popup when a document is selected */}
+      {selectedDocument && (
+        <SummaryPopup
+          document={selectedDocument}
+          onClose={() => setSelectedDocument(null)}
+        />
+      )}
     </>
   );
 }

@@ -11,7 +11,15 @@ import { useEffect, useState } from "react";
 const SummaryPopup = ({ document, onClose }: any) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg max-h-3/4 overflow-y-auto w-3/4">
+      <div className="relative bg-white p-8 rounded-lg max-h-[80vh] w-3/4 overflow-y-auto">
+        {/* Close "X" button */}
+        <button
+          className="absolute top-4 right-4 text-3xl font-bold text-gray-600 hover:text-gray-800"
+          onClick={onClose}
+        >
+          &times;
+        </button>
+
         <h2 className="text-xl font-bold mb-4">{document.title}</h2>
         <p className="text-sm text-gray-600 mb-4">{document.summary}</p>
         <button

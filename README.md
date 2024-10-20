@@ -30,7 +30,7 @@ Ensure you have the following installed on your machine:
 
 #### Step 3: Run the Application
 1. Go back to `thesis_webapp/thesis_webapp` using another terminal
-2. npm run dev
+2. Run `npm run dev`
 3. Your local development environment should now be set up, and the application will be accessible at http://localhost:3000.
 
 ### Features

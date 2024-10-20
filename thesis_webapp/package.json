@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"PORT=11150 npm run dev:next\" \"npm run dev:server\"",
+    "dev": "concurrently \"npm run dev:next\" \"npm run dev:server\"",
     "dev:next": "next dev",
     "dev:server": "node server.js",
     "build": "next build",

@@ -4,3 +4,4 @@ langchain
 pymongo
 numpy
 tensorflow
+tf-keras

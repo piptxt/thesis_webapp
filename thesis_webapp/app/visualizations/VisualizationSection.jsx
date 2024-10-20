@@ -284,6 +284,18 @@ const VisualSection = ({ initialImages }) => {
           </select>
         </div>
       </div>
+
+      <div className="flex flex-col items-center">
+        <h2 className="text-center text-3xl font my-5 mt-10">
+          Wordcount Visuals
+        </h2>
+        <iframe
+          src="http://localhost:6006/#projector"
+          width="90%"
+          height="800px"
+          className="mx-auto"
+        ></iframe>
+      </div>
     </div>
   );
 };

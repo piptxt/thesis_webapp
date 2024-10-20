@@ -17,8 +17,7 @@ const folders = [
 ];
 
 const imagesSet1 = [
-  "/images/UMAP/cosine_umap_visualization.png",
-  "/images/UMAP/cosine_query_umap_visualization.png",
+  
   "/images/UMAP/cosine_umap_visualization_3d.gif",
   "/images/UMAP/cosine_query_3d_umap_zoom.gif",
 ];
@@ -71,6 +70,7 @@ const VisualSection = ({ initialImages }) => {
   }, [currentImages]);
 
   return (
+    
     <div>
       <style jsx>{`
         @keyframes floatIn {
@@ -122,6 +122,17 @@ const VisualSection = ({ initialImages }) => {
           background-color: #005bb5;
         }
       `}</style>
+      <div className="flex flex-col items-center">
+        <h2 className="text-center text-3xl font my-5 mt-10">
+          Embedding Projector Visuals
+        </h2>
+        <iframe
+          src="http://localhost:6006/#projector"
+          width="90%"
+          height="800px"
+          className="mx-auto"
+        ></iframe>
+      </div>
       <div className="container mx-auto my-10">
         <H2 className="text-center text-3xl font my-5">UMAP Visuals</H2>
         <div className="grid grid-cols-2 gap-4">
@@ -283,18 +294,6 @@ const VisualSection = ({ initialImages }) => {
             ))}
           </select>
         </div>
-      </div>
-
-      <div className="flex flex-col items-center">
-        <h2 className="text-center text-3xl font my-5 mt-10">
-          Wordcount Visuals
-        </h2>
-        <iframe
-          src="http://localhost:6006/#projector"
-          width="90%"
-          height="800px"
-          className="mx-auto"
-        ></iframe>
       </div>
     </div>
   );

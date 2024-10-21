@@ -127,7 +127,7 @@ const VisualSection = ({ initialImages }) => {
           Embedding Projector Visuals
         </h2>
         <iframe
-          src="http://127.0.0.1:6006/#projector"
+          src="http://localhost:6006/#projector"
           width="90%"
           height="800px"
           className="mx-auto"

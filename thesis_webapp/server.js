@@ -15,7 +15,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Route to handle PDF upload and text extraction
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post('/api/upload', upload.single('file'), async (req, res) => {
     try {
         const dataBuffer = req.file.buffer;
         const data = await pdfParse(dataBuffer);
@@ -26,5 +26,5 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at ${port}`);
 });

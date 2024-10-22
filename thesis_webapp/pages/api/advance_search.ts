@@ -3,17 +3,20 @@ import axios from "axios";
 
 // This file is for the routing of Vector Search
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', ['POST']);
+    if (req.method !== "POST") {
+      res.setHeader("Allow", ["POST"]);
       return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
     const { query, category, initial } = req.body;
 
-    if (typeof query !== 'string') {
-      return res.status(400).json({ error: 'Invalid query' });
+    if (typeof query !== "string") {
+      return res.status(400).json({ error: "Invalid query" });
     }
 
     let response;
@@ -29,8 +32,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     //   response_query = await axios.post("http://localhost:5000/split_to_chunks", { text: query });
     // }
 
-    response = await axios.post("http://localhost:5000/vector_results", { text: query, category });
-
+    response = await axios.post("http://127.0.0.1:5000/vector_results", {
+      text: query,
+      category,
+    });
 
     // FOR CHUNKS ---------------
     // if (response && response_query) {
@@ -45,6 +50,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch documents' });
+    res.status(500).json({ error: "Failed to fetch documents" });
   }
 }

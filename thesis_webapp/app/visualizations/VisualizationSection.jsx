@@ -127,7 +127,7 @@ const VisualSection = ({ initialImages }) => {
           Embedding Projector Visuals
         </h2>
         <iframe
-          src="http://localhost:6006/#projector"
+          src="http://ccscloud.dlsu.edu.ph:11150/tensorboard/#projector"
           width="90%"
           height="800px"
           className="mx-auto"

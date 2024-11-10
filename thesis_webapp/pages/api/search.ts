@@ -60,6 +60,14 @@ export default async function handler(
                 // },
               ],
             },
+            filter: [
+              {
+                equals: {
+                  value: category,
+                  path: "category",
+                },
+              },
+            ],
             scoreDetails: true,
           },
         },

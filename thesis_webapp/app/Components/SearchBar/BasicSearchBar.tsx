@@ -14,11 +14,11 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "80%",           // Adjust the width of the modal
-    maxWidth: "500px",       // Limit the maximum width of the modal
-    padding: "20px",         // Add padding for spacing inside the modal
-    borderRadius: "10px",    // Rounded corners for a cleaner look
-    boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",  // Add a subtle shadow
+    width: "80%", // Adjust the width of the modal
+    maxWidth: "500px", // Limit the maximum width of the modal
+    padding: "20px", // Add padding for spacing inside the modal
+    borderRadius: "10px", // Rounded corners for a cleaner look
+    boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)", // Add a subtle shadow
   },
 };
 
@@ -28,11 +28,11 @@ export default function SearchBar() {
   const [query, setQuery] = useState(search ? search.get("q") : "");
   const [showScores, setShowScores] = useState(false); // Add state for Show Scores
   const categories = [
-    "Acts",
-    "Supreme Court Decisions",
+    "Act",
+    "Supreme",
     "Republic Acts",
-    "Commonwealth Acts",
-    "Batas Pambansa",
+    "Commonwealth",
+    "Batas",
   ];
   const [selectedCategories, setSelectedCategories] =
     useState<string[]>(categories);
@@ -74,14 +74,14 @@ export default function SearchBar() {
     router.push(`/search`);
   }
 
-    // Open and close modal
-    function openModal() {
-      setIsModalOpen(true);
-    }
-  
-    function closeModal() {
-      setIsModalOpen(false);
-    }
+  // Open and close modal
+  function openModal() {
+    setIsModalOpen(true);
+  }
+
+  function closeModal() {
+    setIsModalOpen(false);
+  }
 
   return (
     <div className="mx-auto p-5">
@@ -138,7 +138,7 @@ export default function SearchBar() {
               onClick={openModal}
               className="mt-4 bg-blue-100 hover:bg-blue-200 text-blue-500 hover:text-blue-600 font-medium px-4 py-2 rounded-lg transition duration-200 ease-in-out focus:outline-none"
             >
-              ℹ️  What are search scores?
+              ℹ️ What are search scores?
             </button>
 
             {/* Modal for detailed explanation */}
@@ -148,22 +148,45 @@ export default function SearchBar() {
               contentLabel="Search Scores Explanation"
               style={customStyles}
             >
-              <h2 className="text-2xl font-bold mb-4">Search Scores Explained</h2>
-              <button onClick={closeModal} className="absolute top-2 right-4 text-lg font-bold">
+              <h2 className="text-2xl font-bold mb-4">
+                Search Scores Explained
+              </h2>
+              <button
+                onClick={closeModal}
+                className="absolute top-2 right-4 text-lg font-bold"
+              >
                 ×
               </button>
 
-              <p><strong>What is a Search Score?</strong></p>
+              <p>
+                <strong>What is a Search Score?</strong>
+              </p>
               <p className="mb-4">
-                A search score measures how relevant a document is to your query. Higher scores indicate stronger relevance, either through matching keywords or the document's overall meaning.
+                A search score measures how relevant a document is to your
+                query. Higher scores indicate stronger relevance, either through
+                matching keywords or the document's overall meaning.
               </p>
 
-              <p><strong>How Search Scores Are Calculated:</strong></p>
+              <p>
+                <strong>How Search Scores Are Calculated:</strong>
+              </p>
               <ul className="list-disc ml-5 mb-4">
-                <li><strong>Basic Search Score (Exact Text Matching)</strong>: Based on how well the exact words in your query match the document text, using full-text search.</li>
-                <li><strong>Vector Search Score (Semantic Relevance)</strong>: Calculated using cosine similarity between vector embeddings of the query and document, measuring conceptual alignment.</li>
-                <li><strong>Hybrid Search Score (Rank Fusion)</strong>: Combines both scores using reciprocal rank fusion (RRF), balancing conceptual relevance with exact term matches.</li>
-                </ul>
+                <li>
+                  <strong>Basic Search Score (Exact Text Matching)</strong>:
+                  Based on how well the exact words in your query match the
+                  document text, using full-text search.
+                </li>
+                <li>
+                  <strong>Vector Search Score (Semantic Relevance)</strong>:
+                  Calculated using cosine similarity between vector embeddings
+                  of the query and document, measuring conceptual alignment.
+                </li>
+                <li>
+                  <strong>Hybrid Search Score (Rank Fusion)</strong>: Combines
+                  both scores using reciprocal rank fusion (RRF), balancing
+                  conceptual relevance with exact term matches.
+                </li>
+              </ul>
             </Modal>
           </div>
         </div>

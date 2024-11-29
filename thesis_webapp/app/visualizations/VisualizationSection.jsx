@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import H2 from "/public/heading/h2";
 import H3 from "/public/heading/h3";
+import P from '/public/heading/P';
 
 const isGif = (url) => {
   return url.endsWith(".gif");
@@ -122,10 +123,11 @@ const VisualSection = ({ initialImages }) => {
           background-color: #005bb5;
         }
       `}</style>
-      <div className="flex flex-col items-center">
-        <h2 className="text-center text-3xl font my-5 mt-10">
+      <div className="container mx-auto my-10">
+        <H2 className="text-center text-3xl font my-5">
           Embedding Projector Visuals
-        </h2>
+        </H2>
+        <P className="text-center text-2xl font my-5 mt-10">The embedding projector from Tensorflow is an engaging visualization of different dimensionality reduction methods. UMAP, PCA and t-SNE are selectable options in order to view how the embeddings of the documents in the vector database behave or are positioned in a vector space.</P>
         <iframe
           src="http://localhost:6006/#projector"
           width="90%"
@@ -135,6 +137,7 @@ const VisualSection = ({ initialImages }) => {
       </div>
       <div className="container mx-auto my-10">
         <H2 className="text-center text-3xl font my-5">UMAP Visuals</H2>
+        <P className="text-center text-2xl font my-5">This is a UMAP visualization that shows how a query is positioned on the whole database of documents. This is essentially how vector search operates when being measured using a distance metric. The most semantically similar points are the ones closest to the query.</P>
         <div className="grid grid-cols-2 gap-4">
           {imagesSet1.map((image, idx) => (
             <div
@@ -167,6 +170,7 @@ const VisualSection = ({ initialImages }) => {
         <H2 className="text-center text-3xl font my-5 mt-10">
           Wordcloud Visuals
         </H2>
+        <P className="text-center text-2xl font my-5 mt-10">Open Law also offers other visualizations to engage users on the essence of different texts and words comprising of the different documents in the Open Law database.</P>
         <div
           className="flex justify-center mb-6"
           style={{ animation: `floatIn 1s both` }}
@@ -250,6 +254,7 @@ const VisualSection = ({ initialImages }) => {
         <H2 className="text-center text-3xl font my-5 mt-10">
           Wordcount Visuals
         </H2>
+        <P className="text-center text-2xl font my-5 mt-10">Wordcounts from different years also offer a little extra insight on the most prominently used words for each year, and within the given document type.</P>
         <div
           className="flex justify-center mb-6"
           style={{ animation: `floatIn 1s both` }}

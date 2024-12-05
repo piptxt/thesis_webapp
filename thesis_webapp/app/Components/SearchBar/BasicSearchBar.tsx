@@ -34,6 +34,13 @@ export default function SearchBar() {
     "Commonwealth",
     "Batas",
   ];
+  const categoriesLabel = {
+    Act: "Acts",
+    Supreme: "Supreme Court Decisions",
+    "Republic Acts": "Republic Acts",
+    Commonwealth: "Commonwealth Acts",
+    Batas: "Batas Pambansa",
+  };
   const [selectedCategories, setSelectedCategories] =
     useState<string[]>(categories);
 
@@ -93,7 +100,7 @@ export default function SearchBar() {
           <div className="mb-2 p-4 border border-gray-300 rounded-lg">
             <h4 className="text-lg font-semibold mb-2">Categories</h4>
             <hr className="font-semibold mb-3"></hr>
-            {categories.map((category) => (
+            {categories.map((category: string) => (
               <label key={category} className="block mb-1">
                 <input
                   type="checkbox"
@@ -102,7 +109,7 @@ export default function SearchBar() {
                   onChange={() => toggleCategory(category)}
                   className="mr-2"
                 />
-                {category}
+                {categoriesLabel[category]}
               </label>
             ))}
           </div>

@@ -15,7 +15,20 @@ client = MongoClient('mongodb+srv://pipo:melgeoffrey@cluster0.yzkq3xh.mongodb.ne
 db = client['Thesis']
 collection = db['Documents']
 
-cursor = collection.find({}, no_cursor_timeout=True)
+categories = [
+    "Act",
+    "Republic Acts",
+    "Commonwealth",
+    "Supreme",
+    "Batas",
+]
+
+cursor = collection.find({"category": {"$in": categories}}, no_cursor_timeout=True)
+
+# For checking purposes only
+# print("Docs: ")
+# for doc in cursor:
+#     print(doc["title"])
 
 embeddings = []
 titles = []  

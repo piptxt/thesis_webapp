@@ -18,126 +18,56 @@ export default async function handler(
       return res.status(200).json({ documents });
     }
 
-    let agg: any = [];
-    if (
-      category === "All" ||
-      category == "all" ||
-      category?.length === 5 ||
-      category?.length === 0
-    ) {
-      agg = [
-        {
-          $search: {
-            compound: {
-              should: [
-                {
-                  text: {
-                    query: query,
-                    path: "title",
-                    score: {
-                      boost: {
-                        value: 2,
-                      },
+    const categories = category.split(",");
+    console.log(categories);
+
+    const agg = [
+      {
+        $search: {
+          compound: {
+            should: [
+              {
+                text: {
+                  query: query,
+                  path: "title",
+                  score: {
+                    boost: {
+                      value: 2,
                     },
                   },
                 },
-                {
-                  text: {
-                    query: query,
-                    path: "text",
-                  },
-                },
-                // {
-                //   text: {
-                //     query: query,
-                //     path: "text",
-                //     score: {
-                //       boost: {
-                //         value: 5,
-                //       },
-                //     },
-                //   },
-                // },
-              ],
-            },
-            filter: [
+              },
               {
-                equals: {
-                  value: category,
-                  path: "category",
+                text: {
+                  query: query,
+                  path: "text",
                 },
               },
             ],
-            scoreDetails: true,
+          },
+          scoreDetails: true,
+        },
+      },
+      {
+        $match: {
+          category: { $in: categories },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          category: 1,
+          text: 1,
+          scoreDetails: {
+            $meta: "searchScoreDetails",
           },
         },
-        {
-          $project: {
-            _id: 1,
-            title: 1,
-            category: 1,
-            text: 1,
-            scoreDetails: {
-              $meta: "searchScoreDetails",
-            },
-          },
-        },
-        {
-          $limit: 50,
-        },
-      ];
-    } else {
-      agg = [
-        {
-          $search: {
-            compound: {
-              should: [
-                {
-                  text: {
-                    query: query,
-                    path: "title",
-                    score: {
-                      boost: {
-                        value: 2,
-                      },
-                    },
-                  },
-                },
-                {
-                  text: {
-                    query: query,
-                    path: "text",
-                  },
-                },
-              ],
-              filter: [
-                {
-                  text: {
-                    query: category,
-                    path: "category",
-                  },
-                },
-              ],
-            },
-            scoreDetails: true,
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            title: 1,
-            category: 1,
-            text: 1,
-            scoreDetails: {
-              $meta: "searchScoreDetails",
-            },
-          },
-        },
-        {
-          $limit: 50,
-        },
-      ];
-    }
+      },
+      {
+        $limit: 50,
+      },
+    ];
 
     const client = await clientPromise;
     const db = client.db("Thesis");
@@ -149,3 +79,20 @@ export default async function handler(
     res.status(500).json({ error: "Failed to fetch Documents" });
   }
 }
+
+/**
+ATLAS SEARCH INDEX:   
+{
+  "mappings": {
+    "dynamic": false,
+    "fields": {
+      "text": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      }
+    }
+  }
+}
+ */
